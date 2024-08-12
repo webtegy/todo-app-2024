@@ -1,6 +1,48 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
+import { View, TextInput,Text, TouchableOpacity, StyleSheet } from 'react-native';
 import TodoItem from './TodoItem';
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: '#f2f2f2',
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 15,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      backgroundColor: '#fff',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#ddd',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    textInput: {
+      flex: 1,
+      fontSize: 16,
+      padding: 10,
+      color: '#333',
+    },
+    addButton: {
+      marginLeft: 10,
+      backgroundColor: '#4CAF50',
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      borderRadius: 8,
+    },
+    addButtonText: {
+      color: '#fff',
+      fontSize: 16,
+    },
+  });
+  
 
 export default function TodoList() {
   // State Hooks
@@ -25,21 +67,28 @@ export default function TodoList() {
   }
   // Render TodoList Component
   return (
-    <View>
-      {tasks.map(task => (
-        <TodoItem
-          key={task.id}
-          task={task}
-          deleteTask={deleteTask}
-          toggleCompleted={toggleCompleted}
-        />
-      ))}
+    <View style={styles.container}>
+    {tasks.map(task => (
+      <TodoItem
+        key={task.id}
+        task={task}
+        deleteTask={deleteTask}
+        toggleCompleted={toggleCompleted}
+      />
+    ))}
+    <View style={styles.inputContainer}>
       <TextInput
+        style={styles.textInput}
         value={text}
         onChangeText={setText}
         placeholder="New Task"
+        placeholderTextColor="#999"
       />
-      <Button title="Add" onPress={addTask} />
+      <TouchableOpacity style={styles.addButton} onPress={addTask}>
+        <Text style={styles.addButtonText}>Add</Text>
+      </TouchableOpacity>
     </View>
+  </View>
+  
   );
 }
