@@ -3,20 +3,20 @@ import { View,  StyleSheet , Image, Alert , Text } from 'react-native';
 import CommonButton from '../../components/CommonButton';
 
 
-export default function LandingDaily({ navigation }) {
+export default function LandingOrganize({ navigation }) {
   return (
     <View style={styles.container}>
         <Image
-            source={require('../../assets/landing/daily.png')}
+            source={require('../../assets/landing/organize.png')}
             style={styles.logo}
             resizeMode="contain"
         />
 
-        <Text style={styles.mainText}>Create daily routine</Text>
-        <Text style={styles.smallText}>In Uptodo  you can create your personalized routine to stay productive</Text>
+        <Text style={styles.mainText}>Organize  your tasks</Text>
+        <Text style={styles.smallText}>You can organize your daily tasks by adding your tasks into separate categories</Text>
 
         <View style={styles.buttonContainer}>
-            <CommonButton pressEvent={() => navigation.replace('LandingOrganize')} />
+            <CommonButton text={'Get Started'} pressEvent={() => navigation.replace('LandingDaily')} />
         </View>
     </View>
   );

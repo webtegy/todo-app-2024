@@ -1,10 +1,10 @@
 import { View , StyleSheet , Text , TouchableOpacity} from 'react-native';
 
 
-export default function CommonButton({pressEvent}) {
+export default function CommonButton({pressEvent , text}) {
     return (
         <TouchableOpacity onPress={pressEvent} style={styles.button}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>{text || 'Next'}</Text>
         </TouchableOpacity>
     )
 }
