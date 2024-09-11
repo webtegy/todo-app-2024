@@ -44,14 +44,14 @@ export default function TodoList() {
   }
   // Function to check the searched value and tasks are matching or not
   function checkSearch(text){
-    return text.includes(searchValue.toLowerCase());
+    return text.includes(searchValue.toLowerCase().trimStart());
   }
   // Render TodoList Component
   return (
     <View style={styles.container}>
       <Text style={styles.head}>ToDoList</Text>
       <View style={styles.searchBar}>
-        <TextInput placeholder="Search" style={[styles.search,{minWidth:searchWidth}]} onChangeText={searchText => setSearchValue(searchText)}/>
+        <TextInput placeholder="Search" style={[styles.search,{minWidth:searchWidth}]} autoCapitalize='none' onChangeText={searchText => setSearchValue(searchText)}/>
         <View style={styles.icon}>
           <FontAwesome name={"search"} size={24} color="#a2a2a2" />
         </View>
