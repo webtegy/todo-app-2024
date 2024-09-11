@@ -6,6 +6,7 @@ import BottomTabNavigator from './navigators/BottomTabNavigator';
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 import LandingManageTask from './screens/landing/LandingManageTask';
+import LandingDaily from './screens/landing/LandingDaily';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ export default function App() {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="LandingPage" component={LandingPage} />
           <Stack.Screen name="LandingManageTaskPage" component={LandingManageTask} />
+          <Stack.Screen name="LandingDaily" component={LandingDaily} />
           <Stack.Screen name="Main" component={BottomTabNavigator} />
         </Stack.Navigator>
       </NavigationContainer>

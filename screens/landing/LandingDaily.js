@@ -3,20 +3,20 @@ import { View,  StyleSheet , Image, Alert , Text } from 'react-native';
 import CommonButton from '../../components/CommonButton';
 
 
-export default function LandingManageTask({ navigation }) {
+export default function LandingDaily({ navigation }) {
   return (
     <View style={styles.container}>
         <Image
-            source={require('../../assets/landing/manage-task.png')}
+            source={require('../../assets/landing/daily.png')}
             style={styles.logo}
             resizeMode="contain"
         />
 
-        <Text style={styles.mainText}>Manage your tasks</Text>
-        <Text style={styles.smallText}>You can easily manage all of your daily tasks in UpTodo for free</Text>
+        <Text style={styles.mainText}>Create daily routine</Text>
+        <Text style={styles.smallText}>In Uptodo  you can create your personalized routine to stay productive</Text>
 
         <View style={styles.buttonContainer}>
-            <CommonButton pressEvent={() => navigation.replace('LandingDaily')} />
+            <CommonButton pressEvent={() => navigation.replace('LandingManageTaskPage')} />
         </View>
     </View>
   );
