@@ -12,7 +12,7 @@ export default function LandingPage({ navigation }) {
             resizeMode="contain"
         />
         <View style={styles.buttonContainer}>
-            <CommonButton />
+            <CommonButton pressEvent={() => navigation.replace('LandingManageTaskPage') } />
         </View>
     </View>
   );
