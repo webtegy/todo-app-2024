@@ -16,7 +16,7 @@ export default function LandingOrganize({ navigation }) {
         <Text style={styles.smallText}>You can organize your daily tasks by adding your tasks into separate categories</Text>
 
         <View style={styles.buttonContainer}>
-            <CommonButton text={'Get Started'} pressEvent={() => navigation.replace('LandingDaily')} />
+            <CommonButton text={'Get Started'} pressEvent={() => navigation.replace('Main')} />
         </View>
     </View>
   );
