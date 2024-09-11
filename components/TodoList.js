@@ -7,6 +7,7 @@ export default function TodoList() {
   // State Hook for inputWidth
   const [inputWidth, setInputWidth] = useState(0);
   const [searchWidth, setSearchWidth] = useState(0);
+  const [searchValue, setSearchValue] = useState("");
 
   // useEffect to handle Platform checks and side-effects
   useEffect(() => {
@@ -41,24 +42,27 @@ export default function TodoList() {
   function toggleCompleted(id) {
     setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)));
   }
-
+  // Function to check the searched value and tasks are matching or not
+  function checkSearch(text){
+    return text.includes(searchValue.toLowerCase());
+  }
   // Render TodoList Component
   return (
     <View style={styles.container}>
       <Text style={styles.head}>ToDoList</Text>
       <View style={styles.searchBar}>
-        <TextInput placeholder="Search" style={[styles.search,{minWidth:searchWidth}]} />
+        <TextInput placeholder="Search" style={[styles.search,{minWidth:searchWidth}]} onChangeText={searchText => setSearchValue(searchText)}/>
         <View style={styles.icon}>
           <FontAwesome name={"search"} size={24} color="#a2a2a2" />
         </View>
       </View>
       {tasks.map(task => (
-        <TodoItem
+          checkSearch((task.text).toLowerCase()) ? <TodoItem
           key={task.id}
           task={task}
           deleteTask={deleteTask}
           toggleCompleted={toggleCompleted}
-        />
+        />:null
       ))}
       <View style={[styles.inputContainer, { minWidth:inputWidth }]}>
         <TextInput
