@@ -8,11 +8,13 @@ import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 import LandingManageTask from './screens/landing/LandingManageTask';
 import LandingDaily from './screens/landing/LandingDaily';
 import LandingOrganize from './screens/landing/LandingOrganize';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <SafeAreaProvider>
     <ApplicationProvider {...eva} theme={eva.dark}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -24,5 +26,6 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>
+    </SafeAreaProvider>
   );
 }

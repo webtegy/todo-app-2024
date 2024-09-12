@@ -4,14 +4,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ProgressTracker from '../../components/dashboard/ProgressComponent';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import TodayTask from '../../components/dashboard/TodayTask';
+import CreateNewTaskModal from '../../components/modals/CreateNewTaskModal';
 
 export default function DashboardScreen() {
     return (
         <SafeAreaView style={styles.container}>
 
             <View style={styles.header}>
-                <Text style={styles.headerText}>You have got 5 tasks</Text>
-                <Text style={styles.headerText}>today to complete 🖍️</Text>
+                <View>
+                    <Text style={styles.headerText}>You have got 5 tasks</Text>
+                    <Text style={styles.headerText}>today to complete 🖍️</Text>
+                </View>
+                <CreateNewTaskModal />
             </View>
 
             <View style={styles.search}>
@@ -59,8 +63,11 @@ const styles = StyleSheet.create({
     } ,
 
     header : {
+        width : '100%',
         display : 'flex',
+        flexDirection: 'row',
         paddingVertical : 10,
+        justifyContent : 'space-between',
     },
 
     headerText : {
