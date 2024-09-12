@@ -2,8 +2,6 @@ import React from 'react';
 import { View,  StyleSheet , Text } from 'react-native';
 import { ProgressBar } from '@ui-kitten/components';
 
-
-
 export default function ProgressTracker(){
     return (
         <View style={styles.container}>

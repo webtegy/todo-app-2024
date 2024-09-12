@@ -2,11 +2,13 @@ import { View , StyleSheet , Text , TextInput} from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ProgressTracker from '../../components/dashboard/ProgressComponent';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import TodayTask from '../../components/dashboard/TodayTask';
 
 export default function DashboardScreen() {
     return (
         <SafeAreaView style={styles.container}>
+
             <View style={styles.header}>
                 <Text style={styles.headerText}>You have got 5 tasks</Text>
                 <Text style={styles.headerText}>today to complete 🖍️</Text>
@@ -26,14 +28,23 @@ export default function DashboardScreen() {
 
             </View>
 
-            <View style={{ flexDirection : 'row' , justifyContent: 'space-between' }}>
-                <Text style={styles.headerText}>Progress</Text>
-                <TouchableOpacity>
-                    <Text style={[styles.taskComplete , {color : '#BA83DE'}]}>See All</Text>
-                </TouchableOpacity>
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                
+                <View style={{ flexDirection : 'row' , justifyContent: 'space-between' }}>
+                    <Text style={[styles.headerText , {fontSize: 20}]}>Progress</Text>
+                    <TouchableOpacity>
+                        <Text style={[styles.taskComplete , {color : '#BA83DE'}]}>See All</Text>
+                    </TouchableOpacity>
+                </View>
 
-            <ProgressTracker />
+                <ProgressTracker />
+
+                <TodayTask task={"Today's Task"} />
+
+                <TodayTask task={"Tommorrow Task"} />
+
+            </ScrollView>
+
 
         </SafeAreaView>
     )
