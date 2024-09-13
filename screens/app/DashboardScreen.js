@@ -5,6 +5,7 @@ import ProgressTracker from '../../components/dashboard/ProgressComponent';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import TodayTask from '../../components/dashboard/TodayTask';
 import CreateNewTaskModal from '../../components/modals/CreateNewTaskModal';
+import EditTaskModal from '../../components/modals/EditTaskModal';
 
 export default function DashboardScreen() {
     return (
@@ -16,6 +17,7 @@ export default function DashboardScreen() {
                     <Text style={styles.headerText}>today to complete 🖍️</Text>
                 </View>
                 <CreateNewTaskModal />
+                {/* <EditTaskModal /> */}
             </View>
 
             <View style={styles.search}>

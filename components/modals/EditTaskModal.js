@@ -1,12 +1,12 @@
 import React , {useState} from 'react';
-import { View,  StyleSheet , Text, Modal, Pressable , TextInput} from 'react-native';
+import { View,  StyleSheet , Text, Modal, Pressable , TouchableOpacity , TextInput} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Agenda , Calendar , AgendaList } from 'react-native-calendars';
 import CalendarPicker from './CalendarView';
 import { ScrollView } from 'react-native-gesture-handler';
 
-export default function CreateNewTaskModal() {
+export default function EditTaskModal() {
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -37,7 +37,7 @@ export default function CreateNewTaskModal() {
                         <Pressable style={{ display : 'flex' , justifyContent: 'flex-start' }} onPress={closeModal}>
                             <Ionicons name="close-circle" size={28} color="white" />
                         </Pressable>
-                        <Text style={styles.headerText}>Create New Task</Text>
+                        <Text style={styles.headerText}>Mobile App Research</Text>
                     </View>
 
                     <ScrollView style={{ paddingBottom : 20 }}>
@@ -107,9 +107,17 @@ export default function CreateNewTaskModal() {
                             </Pressable>
                         </View>
 
-                        <Pressable style={{ backgroundColor : '#D682B9' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
-                            <Text style={{ fontSize : 18 , color : 'white' }}>Create Task</Text>
-                        </Pressable>
+                        <View style={{ display : 'flex' , justifyContent : 'space-between',  flexDirection : 'row'}}>
+                            
+                            <TouchableOpacity style={{ width : '48%' , backgroundColor : '#D682B9' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
+                                <Text style={{ fontSize : 18 , color : 'white' }}>Edit Task</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={{ width : '48%' , backgroundColor : '#3F3F40' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
+                                <Text style={{ fontSize : 18 , color : 'white' }}>Delete Task</Text>
+                            </TouchableOpacity>
+
+                        </View>
 
                     </ScrollView>
 
