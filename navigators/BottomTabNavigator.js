@@ -5,6 +5,7 @@ import DashboardScreen from '../screens/app/DashboardScreen';
 import { DarkTheme } from '@react-navigation/native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import TodoScreen from '../screens/app/TodoScreen';
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
@@ -35,7 +36,7 @@ export default function BottomTabNavigator() {
 
       <Tab.Screen
         name="Todo"
-        component={TodoListScreen}
+        component={TodoScreen}
         options={{
           tabBarLabel: 'Todo',
           tabBarIcon: ({ color }) => (
