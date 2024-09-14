@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Agenda , Calendar , AgendaList } from 'react-native-calendars';
 import CalendarPicker from './CalendarView';
 import { ScrollView } from 'react-native-gesture-handler';
+import AyncStorageService from '../../services/AyncStorageService';
 
 export default function CreateNewTaskModal() {
 
@@ -14,9 +15,15 @@ export default function CreateNewTaskModal() {
         setModalVisible(true);
     };
     
-      const closeModal = () => {
+    const closeModal = () => {
         setModalVisible(false);
     };
+
+    const handleCreateTask = async() => {
+        const res = await AyncStorageService.testAsyncStorage();
+        console.log('tested!' , res)
+    }
+
 
     return (
         <View>
@@ -107,7 +114,7 @@ export default function CreateNewTaskModal() {
                             </Pressable>
                         </View>
 
-                        <Pressable style={{ backgroundColor : '#D682B9' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
+                        <Pressable onPress={handleCreateTask} style={{ backgroundColor : '#D682B9' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
                             <Text style={{ fontSize : 18 , color : 'white' }}>Create Task</Text>
                         </Pressable>
 
