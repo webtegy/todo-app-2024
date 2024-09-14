@@ -1,15 +1,46 @@
-import React , {useState} from 'react';
-import { View,  StyleSheet , Text, Modal, Pressable , TextInput} from 'react-native';
+import React , {useState , useContext, useEffect } from 'react';
+import {TouchableOpacity, View,  StyleSheet , Text, Modal, Pressable , TextInput} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Agenda , Calendar , AgendaList } from 'react-native-calendars';
 import CalendarPicker from './CalendarView';
 import { ScrollView } from 'react-native-gesture-handler';
 import AyncStorageService from '../../services/AyncStorageService';
+import TodoService from '../../services/TodoService';
+import { TodoContext } from '../../store/store';
+
+function SelectableButton({selected , text , pressEvent , padding}){
+    return (
+        <Pressable onPress={pressEvent} style={{ backgroundColor: selected ? '#FAD9FF' : "black" , borderRadius : 5 , paddingHorizontal : padding != undefined ? padding : 35  , paddingVertical : 5 , borderWidth : 1 , borderColor : '#FAD9FF' , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
+            <Text style={{ fontSize : 18 , color : selected ? 'black' : 'white' }}>{text}</Text>
+        </Pressable>
+    )
+}
+
 
 export default function CreateNewTaskModal() {
-
+    const {state, dispatch} = useContext(TodoContext);
     const [modalVisible, setModalVisible] = useState(false);
+   
+    const [formData , setFormData] = useState({
+        title : '',
+        description : '',
+        date : '',
+        categoty: '',
+        priority: '',
+        date: null
+    })
+
+
+    
+    const [date , getDate] = useState(null);
+    
+    useEffect(() => {
+        selectDate(date)
+    }, [date])
+
+    useEffect(() => {
+        console.log('state date : ' , state.tasks)
+    } , [state])
 
     const openModal = () => {
         setModalVisible(true);
@@ -20,8 +51,34 @@ export default function CreateNewTaskModal() {
     };
 
     const handleCreateTask = async() => {
-        const res = await AyncStorageService.testAsyncStorage();
-        console.log('tested!' , res)
+        const res = await TodoService.createNewTask(formData.title , formData.description , formData.priority , formData.categoty , formData.date)
+            
+        if(!res.success){
+            alert(res.message)
+            return
+        }
+        dispatch({ type: 'ADD_TASK', payload: res.message });
+        alert("New task added successfully")
+        setFormData({
+            title : '',
+            description : '',
+            date : '',
+            categoty: '',
+            priority: '',
+            date: null
+        })
+    }
+
+    const selectPriority = (text) => {
+        setFormData({...formData, priority:text})
+    }
+
+    const selectCategory = (text) => {
+        setFormData({...formData, categoty:text})
+    }
+
+    const selectDate = (newDate) => {
+        setFormData({...formData, date: new Date(newDate)})
     }
 
 
@@ -49,7 +106,7 @@ export default function CreateNewTaskModal() {
 
                     <ScrollView style={{ paddingBottom : 20 }}>
                         <View style={styles.calendarArea}>
-                            <CalendarPicker />
+                            <CalendarPicker setDate={getDate} />
                         </View>
 
                         <View style={{ marginTop : 20 }}>
@@ -61,7 +118,9 @@ export default function CreateNewTaskModal() {
                             <TextInput
                                 style={{backgroundColor: '#181818' , padding : 10 , color: 'white' , borderRadius : 5 , height : 40}}
                                 size='large'
-                                placeholder='Name'
+                                placeholder='Title'
+                                onChangeText={(text) => setFormData({...formData, title : text})}
+                                value={formData.title}
                             />
 
                             <View style={{ marginTop:20}}>
@@ -71,7 +130,8 @@ export default function CreateNewTaskModal() {
                                     placeholder='Description'
                                     multiline={true}
                                     numberOfLines={10}
-                                    
+                                    onChangeText={(text) => setFormData({...formData, description : text})}
+                                    value={formData.description}
                                 />
                             </View>
                         </View>
@@ -81,18 +141,9 @@ export default function CreateNewTaskModal() {
                         </View>
 
                         <View style={styles.priority}>
-
-                            <Pressable style={{ borderRadius : 5 , paddingHorizontal : 35 , paddingVertical : 5 , borderWidth : 1 , borderColor : '#FACBBA' , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
-                                <Text style={{ fontSize : 18 , color : 'white' }}>High</Text>
-                            </Pressable>
-
-                            <Pressable style={{ borderRadius : 5 , paddingHorizontal : 35 , paddingVertical : 5 , borderWidth : 1 , borderColor : '#D7F0FF' , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
-                                <Text style={{ fontSize : 18 , color : 'white' }}>Medium</Text>
-                            </Pressable>
-
-                            <Pressable style={{ borderRadius : 5 , paddingHorizontal : 35 , paddingVertical : 5 , borderWidth : 1 , borderColor : '#FAD9FF' , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
-                                <Text style={{ fontSize : 18 , color : 'white' }}>Low</Text>
-                            </Pressable>
+                            <SelectableButton pressEvent={() => selectPriority('High')} selected={formData.priority == 'High'} text={'High'} />
+                            <SelectableButton pressEvent={() => selectPriority('Medium')} padding={30} selected={formData.priority == 'Medium'} text={'Medium'} />
+                            <SelectableButton pressEvent={() => selectPriority('Low')} selected={formData.priority == 'Low'} text={'Low'} />
                         </View>
 
                         <View style={{ marginTop : 40 }}>
@@ -100,28 +151,20 @@ export default function CreateNewTaskModal() {
                         </View>
 
                         <View style={styles.priority}>
-
-                            <Pressable style={{ borderRadius : 5 , paddingHorizontal : 20 , paddingVertical : 5 , borderWidth : 1 , borderColor : '#FACBBA' , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
-                                <Text style={{ fontSize : 18 , color : 'white' }}>Personal</Text>
-                            </Pressable>
-
-                            <Pressable style={{ borderRadius : 5 , paddingHorizontal : 35 , paddingVertical : 5 , borderWidth : 1 , borderColor : '#FACBBA' , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
-                                <Text style={{ fontSize : 18 , color : 'white' }}>Work</Text>
-                            </Pressable>
-
-                            <Pressable style={{ borderRadius : 5 , paddingHorizontal : 35 , paddingVertical : 5 , borderWidth : 1 , borderColor : '#FACBBA' , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
-                                <Text style={{ fontSize : 18 , color : 'white' }}>Stduy</Text>
-                            </Pressable>
+                            <SelectableButton pressEvent={() => selectCategory('Work')} selected={formData.categoty == 'Work'} text={'Work'} />
+                            <SelectableButton pressEvent={() => selectCategory('Study')} selected={formData.categoty == 'Study'} text={'Study'} />
+                            <SelectableButton pressEvent={() => selectCategory('Personal')} padding={20} selected={formData.categoty == 'Personal'} text={'Personal'} />
                         </View>
 
-                        <Pressable onPress={handleCreateTask} style={{ backgroundColor : '#D682B9' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
+                        <TouchableOpacity onPress={handleCreateTask} style={{ backgroundColor : '#D682B9' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
                             <Text style={{ fontSize : 18 , color : 'white' }}>Create Task</Text>
-                        </Pressable>
+                        </TouchableOpacity>
 
                     </ScrollView>
 
 
                 </SafeAreaView>
+
             </Modal>
 
         </View>
@@ -142,8 +185,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         marginTop: 50,
-        // padding : 10,
-
     },
 
     headerText: {

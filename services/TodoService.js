@@ -1,15 +1,25 @@
 import Task from '../models/Todo'
+import AyncStorageService from './AyncStorageService'
 
 export default {
 
-    createNewTask : (title, description, priority , category) => {
-        if(title == '' || description == '' || priority == '' || category == ''){
-            return 'All fields are required';
+    createNewTask : async (title, description, priority , category , date) => {
+        
+        if(title == '' || description == '' || priority == '' || category == '' || date == null){
+            return {
+                success: false,
+                message: 'All fields are required'
+            }
         }
-        const newTask = new Task(title, description, priority, category)
-        // save it to  the async storage
-        return newTask
+        
+        const newTask = new Task(title, description, priority, category , date)
+        
+        await AyncStorageService.saveNewTask(newTask)
+        
+        return {
+            success: true,
+            message: newTask
+        }
     }
-
 
 }

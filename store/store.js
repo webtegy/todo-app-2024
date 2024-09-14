@@ -1,4 +1,4 @@
-import React, { createContext, useState, useReducer } from 'react';
+import React, { createContext, useReducer } from 'react';
 
 export const TodoContext = createContext();
 
@@ -22,7 +22,6 @@ const reducer = (state, action) => {
 };
 
 export const StoreProvider = ({ children }) => {
-
     const [state, dispatch] = useReducer(reducer, initialState);
   
     return (
