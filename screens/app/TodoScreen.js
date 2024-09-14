@@ -5,6 +5,7 @@ import ProgressTracker from '../../components/dashboard/ProgressComponent';
 import TodayTask from '../../components/dashboard/TodayTask';
 import { ScrollView } from 'react-native-gesture-handler';
 import FilterList from '../../components/FilterListComponent';
+import AnalysisModal from '../../components/modals/Analysis';
 
 export default function TodoScreen(){
     return (
@@ -13,8 +14,9 @@ export default function TodoScreen(){
                 <View style={styles.header}>
                     <View>
                         <Text style={styles.headerText}>Task List</Text>
-                        <Text style={styles.headerText}>Explore your task 🌍</Text>
+                        <Text style={styles.headerText}>Explore your tasks 🌍</Text>
                     </View>
+                    <AnalysisModal />
                 </View>
 
                 <View style={styles.search}>

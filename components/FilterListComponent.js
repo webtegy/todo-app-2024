@@ -2,11 +2,11 @@ import { View,  StyleSheet , Text , TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 
-function Chip({text}){
+function Chip({emoji , text , active}){
     return (
         <View>
-            <TouchableOpacity style={styles.chip}>
-                <Text style={styles.chipText}>{text}</Text>
+            <TouchableOpacity style={[styles.chip , {backgroundColor: active ? '#f0f0f0' : 'black'}]}>
+                <Text style={[styles.chipText,  {color : active ? 'black' : 'white'}]}>{emoji + "  " + text}</Text>
             </TouchableOpacity>
         </View>
     )
@@ -16,10 +16,9 @@ function Chip({text}){
 export default function FilterList(){
     return (
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            <Chip text={'Priority'} />
-            <Chip text={'Status'} />
-            <Chip text={'Category'} />
-            <Chip />
+            <Chip active={true} emoji={'⚠️'} text={'Priority'} />
+            <Chip active={false} emoji={'⚡'} text={'Status'} />
+            <Chip active={false} emoji={'📁'} text={'Category'} />
         </ScrollView>
     )
 }
@@ -29,7 +28,6 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10,
         paddingHorizontal : 25,
-        backgroundColor: '#f0f0f0',
         borderRadius: 20,
         borderColor: '#cccccc',
         borderWidth: 1

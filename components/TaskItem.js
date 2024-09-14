@@ -1,15 +1,8 @@
 import React from 'react';
-import { View,  StyleSheet , Text , TouchableOpacity } from 'react-native';
+import { View,  StyleSheet , Text  } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import CheckButton from './CheckButton';
 
-
-function CheckButton(){
-    return (
-        <TouchableOpacity style={styles.checkButton}>
-            <AntDesign name="check" size={16} color="black" />
-        </TouchableOpacity>
-    )
-}
 
 
 export default function TaskItem() {
@@ -45,14 +38,5 @@ const styles = StyleSheet.create({
         borderLeftColor: '#8875FF',
         elevation: 2
     },
-    checkButton: {
-        // backgroundColor: '#1F1F1F',
-        backgroundColor: '#BA83DE',
-        borderRadius: 30,
-        padding: 5,
-        borderWidth: 1,
-        borderColor: '#BA83DE',
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
+
 })
