@@ -38,7 +38,7 @@ export default function CalendarPicker({ setDate}) {
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
-    setDate(date)
+    setDate(new Date(new Date(date).toLocaleDateString()))
   };
 
   const renderWeekDates = () => {

@@ -8,7 +8,7 @@ export default function TodoFilterList({task , list}) {
             <View style={{marginBottom: 10, flexDirection : 'row' , justifyContent: 'space-between' }}>
                 <Text style={[styles.taskText , {fontSize: 20 , marginVertical: 'auto'}]}>{task}</Text>
             </View>
-            {list.map((item , index) => (<TaskItem key={index} />))}
+            {list.map((item , index) => (<TaskItem item={item} key={index} />))}
         </View>
     )
 }

@@ -45,9 +45,9 @@ export default function DashboardScreen() {
 
                 <ProgressTracker />
 
-                <TodayTask task={"Today's Task"} />
+                {/* <TodayTask task={"Today's Task"} />
 
-                <TodayTask task={"Tommorrow Task"} />
+                <TodayTask task={"Tommorrow Task"} /> */}
 
             </ScrollView>
 
@@ -72,11 +72,11 @@ const styles = StyleSheet.create({
         justifyContent : 'space-between',
     },
 
-    headerText : {
-        fontSize : 30,
-        fontWeight : 'bold',
-        color : 'white'
-    },
+    // headerText : {
+    //     fontSize : 30,
+    //     fontWeight : 'bold',
+    //     color : 'white'
+    // },
 
     search: {
         display : 'flex',

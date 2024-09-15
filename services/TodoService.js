@@ -1,5 +1,6 @@
 import Task from '../models/Todo'
 import AyncStorageService from './AsyncStorageService'
+import { isSameDay } from 'date-fns';
 
 export default {
 
@@ -20,6 +21,15 @@ export default {
             success: true,
             message: newTask
         }
+    },
+
+    getTodosByDate : (date , tasks) => {
+        const filteredTodos = tasks.filter(task => 
+            isSameDay(new Date(task.date), date)
+        );
+
+        return filteredTodos
+
     }
 
 }
