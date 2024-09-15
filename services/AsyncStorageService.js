@@ -6,6 +6,7 @@ export default {
         const tasks = await this.loadTasks();
         tasks.push(newTask);
         await AsyncStorage.setItem('taskList', JSON.stringify(tasks));
+        
     },
 
     loadTasks: async function () {
@@ -14,6 +15,10 @@ export default {
             return JSON.parse(tasks);
         }
         return [];
+    },
+
+    resetTasks: async function(){
+        await AsyncStorage.removeItem('taskList');
     }
 
 }

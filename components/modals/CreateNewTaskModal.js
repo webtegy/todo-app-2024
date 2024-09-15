@@ -4,7 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CalendarPicker from './CalendarView';
 import { ScrollView } from 'react-native-gesture-handler';
-import AyncStorageService from '../../services/AyncStorageService';
+import AyncStorageService from '../../services/AsyncStorageService';
 import TodoService from '../../services/TodoService';
 import { TodoContext } from '../../store/store';
 

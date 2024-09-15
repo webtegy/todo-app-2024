@@ -9,6 +9,7 @@ const initialState = {
 const reducer = (state, action) => {
     switch (action.type) {
         case 'LOAD_TASKS':
+            state.tasks = [];
             return { tasks: action.payload };
         case 'ADD_TASK':
             return { ...state, tasks: [...state.tasks, action.payload] };

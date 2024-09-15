@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React , {useEffect , useContext} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TodoListScreen from '../screens/app/TodoListScreen';
 import DashboardScreen from '../screens/app/DashboardScreen';
@@ -6,9 +6,36 @@ import { DarkTheme } from '@react-navigation/native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TodoScreen from '../screens/app/TodoScreen';
+import { TodoContext } from '../store/store';
+import AsyncStorageService from '../services/AsyncStorageService';
+
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
+  const {state, dispatch} = useContext(TodoContext);
+
+  const loadLocalTasks = async () => {
+    try{
+      let todos = await AsyncStorageService.loadTasks()
+
+      if(todos){
+        dispatch({ type: 'LOAD_TASKS', payload: todos });
+      }
+
+    }catch(err){
+      console.log("Error while loading local tasks => ", err)
+    }
+
+  }
+
+  useEffect(() => {
+    loadLocalTasks();
+  } , [])
+
+  useEffect(() => {
+    console.log(state)
+  } , [state])
+
   return (
     <Tab.Navigator
       initialRouteName="Home"

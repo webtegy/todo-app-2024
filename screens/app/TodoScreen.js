@@ -1,13 +1,98 @@
+import React , {useState , useEffect , useContext} from 'react'
 import { View , StyleSheet , Text, SafeAreaView , TextInput} from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import CalendarPicker from '../../components/modals/CalendarView';
 import ProgressTracker from '../../components/dashboard/ProgressComponent';
-import TodayTask from '../../components/dashboard/TodayTask';
 import { ScrollView } from 'react-native-gesture-handler';
 import FilterList from '../../components/FilterListComponent';
 import AnalysisModal from '../../components/modals/Analysis';
+import TodoFilterList from '../../components/TodoScreen/TodoFilterList';
+import { TodoContext } from '../../store/store'
 
 export default function TodoScreen(){
+    const [filterType , setFilterType] = useState('Priority')
+    const {state, dispatch} = useContext(TodoContext);
+    const [filterArray , setFilterArray] = useState([]);
+
+    useEffect(() => {
+        console.log('selected filter : ' , state.tasks)
+        switch (filterType) {
+
+            case 'Priority':
+                filterByPriority()
+                break;
+            case 'Category':
+                filterByCategory()
+                break;
+            case 'Status':
+                filterByStatus()
+                break;
+            default:
+                filterByPriority()
+                break;
+        }
+
+    } , [filterType])
+
+    const filterByPriority = () => {
+        const l1 = state.tasks.filter(task => task.priority === 'High')
+        const l2 = state.tasks.filter(task => task.priority === 'Medium')
+        const l3 = state.tasks.filter(task => task.priority === 'Low')
+
+        setFilterArray([
+            {
+                type: 'High',
+                list: l1
+            },
+            {
+                type: 'Medium',
+                list: l2
+            },
+            {
+                type: 'Low',
+                list: l3
+            }
+        ])
+
+    }
+
+    const filterByCategory = () => {
+        const l1 = state.tasks.filter(task => task.category === 'Work')
+        const l2 = state.tasks.filter(task => task.category === 'Study')
+        const l3 = state.tasks.filter(task => task.category === 'Personal')
+        
+        setFilterArray([
+            {
+                type: 'Work',
+                list: l1
+            },
+            {
+                type: 'Study',
+                list: l2
+            },
+            {
+                type: 'Personal',
+                list: l3
+            }
+        ])
+    
+    }
+
+    const filterByStatus= () => {
+        const l1 = state.tasks.filter(task => task.completed === true)
+        const l2 = state.tasks.filter(task => task.completed === false)
+        setFilterArray([
+            {
+                type: 'Completed',
+                list: l1
+            },
+            {
+                type: 'Incompleted',
+                list: l2
+            }
+        ])
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ paddingHorizontal : 15 }}>
@@ -38,16 +123,14 @@ export default function TodoScreen(){
                         <CalendarPicker />
                     </View>
 
-                    <FilterList />
+                    <FilterList selectedChip={filterType} clickEvent={setFilterType} />
 
                     <View>
                         <ProgressTracker />
                     </View>
 
-                    <TodayTask task={"Today's Task"} />
-                    <TodayTask task={"Today's Task"} />
-                    <TodayTask task={"Today's Task"} />
-                    <TodayTask task={"Today's Task"} />
+                    {filterArray.map((item , index) => (<TodoFilterList key={index} list={item.list} task={item.type} />) )}
+
                 </ScrollView>
 
 
