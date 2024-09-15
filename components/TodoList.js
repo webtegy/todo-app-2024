@@ -1,41 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, FlatList, Button } from 'react-native';
 import TodoItem from './TodoItem';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f2f2f2',
-  },
-  inputContainer: {
-    marginVertical: 10,
-  },
-  textInput: {
-    fontSize: 16,
-    padding: 10,
-    color: '#333',
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginVertical: 5,
-    backgroundColor: '#fff',
-  },
-  addButton: {
-    marginTop: 15,
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-});
-
-export default function TodoList() {
+const TodoList = () => {
   const [tasks, setTasks] = useState([
     { id: 1, text: 'Doctor Appointment', completed: false },
     { id: 2, text: 'Meeting at School', completed: false },
@@ -46,52 +13,91 @@ export default function TodoList() {
     { id: 7, text: 'Clean the House', completed: false },
     { id: 8, text: 'Reply to Emails', completed: true },
   ]);
-  
+
   const [text, setText] = useState('');
+  const [filter, setFilter] = useState('all'); // 'all', 'completed', 'incomplete'
 
-  // Function to Add Task
-  function addTask() {
-    if (!text.trim()) return; // Prevent empty task from being added
-    const newTask = { id: Date.now(), text, completed: false };
-    setTasks([...tasks, newTask]);
-    setText('');
-  }
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'completed') return task.completed;
+    if (filter === 'incomplete') return !task.completed;
+    return true; // 'all'
+  });
 
-  // Function to Delete Task
-  function deleteTask(id) {
-    setTasks(tasks.filter(task => task.id !== id));
-  }
-
-  // Function to Toggle Task Completion
-  function toggleCompleted(id) {
-    setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)));
-  }
+  const addTask = () => {
+    if (text.trim()) {
+      setTasks([...tasks, { id: Date.now().toString(), text, completed: false }]);
+      setText('');
+    }
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      {tasks.map(task => (
-        <TodoItem
-          key={task.id}
-          task={task}
-          deleteTask={deleteTask}
-          toggleCompleted={toggleCompleted}
-        />
-      ))}
-
-      {/* Input Section for New Task */}
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          value={text}
-          onChangeText={setText}
-          placeholder="New Task"
-          placeholderTextColor="#999"
-        />
-
-        <TouchableOpacity style={styles.addButton} onPress={addTask}>
-          <Text style={styles.addButtonText}>Add Task</Text>
+    <View style={styles.container}>
+      <View style={styles.filters}>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setFilter('all')}>
+          <Text style={styles.filterButtonText}>All</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setFilter('completed')}>
+          <Text style={styles.filterButtonText}>Completed</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setFilter('incomplete')}>
+          <Text style={styles.filterButtonText}>Incomplete</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+      <FlatList
+        data={filteredTasks}
+        renderItem={({ item }) => (
+          <TodoItem task={item} />
+        )}
+        keyExtractor={item => item.id}
+      />
+      <TextInput
+        style={styles.input}
+        value={text}
+        onChangeText={setText}
+        placeholder="New Task"
+      />
+      <TouchableOpacity onPress={addTask} style={styles.addButton}>
+        <Text style={styles.addButtonText}>Add Task</Text>
+      </TouchableOpacity>
+    </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  filters: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 16,
+  },
+  filterButton: {
+    backgroundColor: '#007BFF', // Blue color for buttons
+    padding: 10,
+    borderRadius: 4,
+  },
+  filterButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+  },
+  input: {
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: 8,
+    marginBottom: 8,
+  },
+  addButton: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 4,
+  },
+  addButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+  },
+});
+
+export default TodoList;
