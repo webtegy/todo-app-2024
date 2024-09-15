@@ -114,15 +114,17 @@ export default function TodoScreen() {
                 </View>
 
                 <ScrollView style={{ marginBottom: 130 }}>
+                    
                     <View style={styles.calendarArea}>
                         <CalendarPicker setDate={setSelectedDate} />
                     </View>
 
-                    <FilterList selectedChip={filterType} clickEvent={setFilterType} />
-
-                    <View>
+                    <View style= {{ marginBottom : 10 }}>
                         <ProgressTracker taskList={todoList} />
                     </View>
+
+
+                    <FilterList selectedChip={filterType} clickEvent={setFilterType} />
 
                     {filterArray.map((item, index) => (
                         <TodoFilterList key={index} list={item.list} task={item.type} />

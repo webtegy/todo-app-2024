@@ -5,7 +5,7 @@ import { ProgressBar } from '@ui-kitten/components';
 export default function ProgressTracker({taskList}){
 
     const [completed , setCompleted] = useState(0);
-    const [progressMessage, setProgressMessage] = useState('Start completing tasks!');
+    const [progressMessage, setProgressMessage] = useState('');
 
 
     useEffect(() => {

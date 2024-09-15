@@ -2,28 +2,19 @@ import React , {useState} from 'react';
 import { View,  StyleSheet , Text, Modal, Pressable , TouchableOpacity , TextInput} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Agenda , Calendar , AgendaList } from 'react-native-calendars';
 import CalendarPicker from './CalendarView';
 import { ScrollView } from 'react-native-gesture-handler';
 
-export default function EditTaskModal() {
+export default function EditTaskModal({modalVisible , closeModal}) {
 
-    const [modalVisible, setModalVisible] = useState(false);
-
-    const openModal = () => {
-        setModalVisible(true);
-    };
-    
-      const closeModal = () => {
-        setModalVisible(false);
-    };
+    // const [modalVisible, setModalVisible] = useState(false);
 
     return (
         <View>
             
-            <Pressable style={{ marginVertical : 'auto', marginRight : 10 }} onPress={openModal}>
+            {/* <Pressable style={{ marginVertical : 'auto', marginRight : 10 }} onPress={openModal}>
                 <Ionicons name="add-circle" size={28} color="white" />
-            </Pressable>
+            </Pressable> */}
 
             <Modal
                 animationType="slide"
