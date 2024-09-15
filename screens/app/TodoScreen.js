@@ -20,7 +20,6 @@ export default function TodoScreen() {
 
     useEffect(() => {
         const res = TodoService.getTodosByDate(selectedDate , state.tasks);
-        console.log("selected date -> ", res)
         setTodoList(res)
     } , [selectedDate])
 
@@ -122,7 +121,7 @@ export default function TodoScreen() {
                     <FilterList selectedChip={filterType} clickEvent={setFilterType} />
 
                     <View>
-                        <ProgressTracker />
+                        <ProgressTracker taskList={todoList} />
                     </View>
 
                     {filterArray.map((item, index) => (
