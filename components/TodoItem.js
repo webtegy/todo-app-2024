@@ -1,109 +1,96 @@
-import React from 'react';
-import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Button, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import Checkbox from 'expo-checkbox';
 
 const styles = StyleSheet.create({
-    todoItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingVertical: 10,
-      paddingHorizontal: 15,
-      marginVertical: 5,
-      backgroundColor: '#f9f9f9',
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: '#ddd',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
-      shadowRadius: 2,
-      elevation: 2,
-    },
-    checkboxContainer: {
-      marginRight: 10,
-    },
-    todoItemText: {
-      flex: 1,
-      fontSize: 16,
-      color: '#333',
-    },
-    completed: {
-      textDecorationLine: 'line-through',
-      color: '#999',
-    },
-    deleteButton: {
-      backgroundColor: '#FF6347',
-      paddingVertical: 6,
-      paddingHorizontal: 10,
-      borderRadius: 5,
-    },
-    deleteButtonText: {
-      color: '#fff',
-      fontSize: 14,
-    },
-    editButton: {
-      backgroundColor: '#4CAF50',
-      paddingVertical: 6,
-      paddingHorizontal: 10,
-      borderRadius: 5,
-      marginLeft: 10,
-    },
-    editButtonText: {
-      color: '#fff',
-      fontSize: 14,
-    },
-    input: {
-      borderBottomWidth: 1,
-      borderBottomColor: '#ddd',
-      paddingVertical: 5,
-      flex: 1,
-      marginRight: 10,
-    },
-    priority: {
-      marginRight: 10,
-      fontSize: 14,
-      color: '#FF6347',
-    },
-    dueDate: {
-      fontSize: 12,
-      color: '#888',
-    },
-  });
-  
+  todoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginVertical: 5,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  checkboxContainer: {
+    marginRight: 10,
+  },
+  todoItemText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+  },
+  completed: {
+    textDecorationLine: 'line-through',
+    color: '#999',
+  },
+  deleteButton: {
+    backgroundColor: '#FF6347',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  editButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    paddingVertical: 5,
+    flex: 1,
+  },
+  dueDate: {
+    fontSize: 12,
+    color: '#888',
+  },
+});
 
-export default function TodoItem({ task, deleteTask, toggleCompleted,editTask}) {
+export default function TodoItem({ task, deleteTask, toggleCompleted, editTask }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newText, setNewText] = useState(task.text);
-  const [newPriority, setNewPriority] = useState(task.priority || 'Medium');
   const [newDueDate, setNewDueDate] = useState(task.dueDate || '');
 
   const handleSave = () => {
-    editTask(task.id, newText, newPriority, newDueDate);
+    editTask(task.id, newText, newDueDate);
     setIsEditing(false);
   };
-    return ( 
-        <View style={styles.todoItem}>
-        <View style={styles.checkboxContainer}>
-          <Checkbox
-            value={task.completed}
-            onValueChange={() => toggleCompleted(task.id)}
-            tintColors={{ true: '#4CAF50', false: '#ccc' }} // Green when checked
-          />
-        </View>
-        {isEditing ? (
+
+  return (
+    <View style={styles.todoItem}>
+      <View style={styles.checkboxContainer}>
+        <Checkbox
+          value={task.completed}
+          onValueChange={() => toggleCompleted(task.id)}
+          tintColors={{ true: '#4CAF50', false: '#ccc' }} // Green when checked
+        />
+      </View>
+      {isEditing ? (
         <View style={{ flex: 1 }}>
           <TextInput
             style={styles.input}
             value={newText}
             onChangeText={setNewText}
             placeholder="Task description"
-          />
-          <TextInput
-            style={styles.input}
-            value={newPriority}
-            onChangeText={setNewPriority}
-            placeholder="Priority (e.g., High, Medium, Low)"
           />
           <TextInput
             style={styles.input}
@@ -117,10 +104,9 @@ export default function TodoItem({ task, deleteTask, toggleCompleted,editTask}) 
         </View>
       ) : (
         <View style={{ flex: 1 }}>
-        <Text style={[styles.todoItemText, task.completed && styles.completed]}>
-          {task.text}
-        </Text>
-        <Text style={styles.priority}>Priority: {task.priority || 'Medium'}</Text>
+          <Text style={[styles.todoItemText, task.completed && styles.completed]}>
+            {task.text}
+          </Text>
           {task.dueDate ? <Text style={styles.dueDate}>Due: {task.dueDate}</Text> : null}
         </View>
       )}
@@ -138,6 +124,6 @@ export default function TodoItem({ task, deleteTask, toggleCompleted,editTask}) 
           <Text style={styles.deleteButtonText}>Delete</Text>
         </TouchableOpacity>
       </View>
-      </View>
-    );
-  }
+    </View>
+  );
+}
