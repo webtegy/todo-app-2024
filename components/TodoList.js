@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { View, TextInput,Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput,Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import TodoItem from './TodoItem';
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
       padding: 20,
       backgroundColor: '#f2f2f2',
     },
     inputContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 15,
+      marginTop: 30,
       paddingHorizontal: 10,
       paddingVertical: 5,
       backgroundColor: '#fff',
@@ -23,6 +22,7 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 2,
+      marginBottom:30
     },
     textInput: {
       flex: 1,
@@ -46,36 +46,48 @@ const styles = StyleSheet.create({
 
 export default function TodoList() {
   // State Hooks
-  const [tasks, setTasks] = useState([
-    { id: 1, text: 'Doctor Appointment', completed: true },
-    { id: 2, text: 'Meeting at School', completed: false },
-  ]);
+  const [tasks, setTasks] = useState([]);
   const [text, setText] = useState('');
+  const[editedTask, setEditedTask] = useState(null);
+
   // Function to Add Task
-  function addTask() {
-    const newTask = { id: Date.now(), text, completed: false };
-    setTasks([...tasks, newTask]);
+  const addTask =()=> {
+    setTasks([...tasks, { id: Date.now().toString(), text:text, completed: false }]);
     setText('');
   }
   // Function to Delete Task
   function deleteTask(id) {
     setTasks(tasks.filter(task => task.id !== id));
   }
+
+  // Funtion to edit task
+  const editTask = (item)=>{
+    setEditedTask(item);
+    setText(item.text);
+  }
+
+  // Funtion to save task after edit
+  const saveTask = ()=>{
+    const updatedTasks = tasks.map((item)=>{
+      if(item.id === editedTask.id){
+        return {...item,text:text};
+      }
+      return item;
+    });
+    setEditedTask(null);
+    setText("");
+    setTasks(updatedTasks);
+  }
+
   // Function to Toggle Task Completion
   function toggleCompleted(id) {
     setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)));
   }
+
+  
   // Render TodoList Component
   return (
     <View style={styles.container}>
-    {tasks.map(task => (
-      <TodoItem
-        key={task.id}
-        task={task}
-        deleteTask={deleteTask}
-        toggleCompleted={toggleCompleted}
-      />
-    ))}
     <View style={styles.inputContainer}>
       <TextInput
         style={styles.textInput}
@@ -84,10 +96,30 @@ export default function TodoList() {
         placeholder="New Task"
         placeholderTextColor="#999"
       />
-      <TouchableOpacity style={styles.addButton} onPress={addTask}>
-        <Text style={styles.addButtonText}>Add</Text>
-      </TouchableOpacity>
+
+      {
+        editedTask?
+        ( <TouchableOpacity style={styles.addButton} onPress={()=>saveTask()}>
+          <Text style={styles.addButtonText}>Save</Text>
+          </TouchableOpacity>
+        ):
+        (
+          <TouchableOpacity style={styles.addButton} onPress={()=>addTask()}>
+          <Text style={styles.addButtonText}>Add</Text>
+          </TouchableOpacity>
+        )
+      }
     </View>
+
+    {tasks.map(task => (
+      <TodoItem
+        key={task.id}
+        task={task}
+        deleteTask={deleteTask}
+        editTask = {editTask}
+      />
+      ))}
+      
   </View>
   
   );
