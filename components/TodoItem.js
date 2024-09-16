@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import {
-  Animated,
   View,
   Text,
-  Button,
+  TextInput,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
+  Modal,
+  Button,
   Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import Checkbox from "expo-checkbox";
 import { format } from "date-fns";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -21,75 +26,130 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 10,
     paddingHorizontal: 15,
-    marginVertical: 5,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 8,
+    marginLeft: 15,
+    marginBottom: 10,
+    backgroundColor: "#fff",
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#000000",
+    borderColor: "#ddd",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
     maxWidth: width - 30,
   },
   checkboxContainer: {
     marginRight: 10,
   },
+   textContainer: {
+    flexDirection: "column",
+    width: 245,
+  },
   todoItemText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 19,
+    fontWeight: "700",
     color: "#333",
-    overflow: "hidden",
   },
   completed: {
     textDecorationLine: "line-through",
-    color: "#999",
+    color: "#888",
   },
   deleteButton: {
-    backgroundColor: "#FF3B30", // Bright red for delete
+    backgroundColor: "#FF3B30",
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 5,
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontSize: 14,
+    marginRight: 0,
   },
   dueDate: {
     fontSize: 14,
-    color: "#FF6347", // Priority in red
+    color: "#007BFF",
     marginTop: 5,
+    marginBottom: 5,
   },
   priorityContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    marginTop: 5,
+    marginTop: 10,
   },
   priorityText: {
     fontSize: 14,
-    color: "#FF6347", // Priority in red
+    color: "#007BFF",
   },
   editButton: {
-    backgroundColor: "#000000", // Black color for edit button
+    backgroundColor: "#007BFF",
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 5,
-  },
-  editButtonText: {
-    color: "#fff",
-    fontSize: 14,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 14,
+    marginRight:18,
   },
   actionButtonsContainer: {
     flexDirection: "row",
+    alignItems: "Right",
     justifyContent: "space-between",
-    width: "100%",
+   // width: 100,
     marginTop: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+    margin:60,
+  },
+  input: {
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+    marginBottom: 10,
+    padding: 5,
+  },
+  priorityButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    margin: 5,
+  },
+  priorityButton: {
+    padding: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    margin: 10,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  saveButton : {
+    padding: 8,
+    borderRadius: 7,
+    margin: 10,
+    width : 60,
+    marginLeft:50,
+    backgroundColor:"#007BFF",
+    alignItems: "center",
+  },
+  cancleButton : {
+    padding: 8,
+    borderRadius: 7,
+    margin: 10,
+    width : 60,
+    marginRight:50,
+    backgroundColor:"#ff362b",
+    alignItems: "center",
+  },
+  buttonText: {
+    flex: 1,
+    fontSize: 16,
+    color: "#fff",
   },
 });
 
@@ -99,6 +159,12 @@ export default function TodoItem({
   toggleCompleted,
   updateTask,
 }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedText, setEditedText] = useState(task.text);
+  const [editedPriority, setEditedPriority] = useState(task.priority);
+  const [editedDueDate, setEditedDueDate] = useState(new Date(task.dueDate));
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   const formatDueDate = (dateString) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
@@ -107,9 +173,6 @@ export default function TodoItem({
     return format(date, "MMM dd, yyyy");
   };
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedText, setEditedText] = useState(task.text);
-
   const saveEdit = () => {
     updateTask(task.id, editedText);
     setIsEditing(false);
@@ -117,6 +180,13 @@ export default function TodoItem({
 
   const formattedDueDate = format(new Date(task.dueDate), "MMM dd, yyyy");
   const isOverdue = new Date(task.dueDate) < new Date();
+
+  const getPriorityColor = (priority) => {
+    if (priority === "High") return "#FF6347"; // Red
+    if (priority === "Medium") return "#4CAF50"; // Green
+    if (priority === "Low") return "#ADFF2F"; // Yellow
+    return "#333";
+  };
 
   return (
     <View style={styles.todoItem}>
@@ -128,56 +198,134 @@ export default function TodoItem({
             tintColors={{ true: "#4CAF50", false: "#ccc" }}
           />
         </View>
-        {isEditing ? (
-          <TextInput
-            style={styles.todoItemText}
-            value={editedText}
-            onChangeText={setEditedText}
-            onSubmitEditing={saveEdit}
-          />
-        ) : (
-          <Text
-            style={[styles.todoItemText, task.completed && styles.completed]}
-            numberOfLines={1} // Ensure text stays on one line
-          >
-            {task.text}
+        <Text
+          style={[styles.todoItemText, task.completed && styles.completed]}
+          numberOfLines={1}
+        >
+          {task.text}
+        </Text>
+      </View>
+
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={styles.textContainer}>
+          <View style={styles.priorityContainer}>
+            {task.priority && (
+              <Text
+                style={[
+                  styles.priorityText,
+                  { color: getPriorityColor(task.priority) },
+                ]}
+              >{`Priority: ${task.priority}`}</Text>
+            )}
+          </View>
+
+          <Text style={styles.dueDate}>
+            {isOverdue
+              ? `Overdue: ${formattedDueDate}`
+              : `Due: ${formattedDueDate}`}
           </Text>
-        )}
-      </View>
-      <View style={styles.priorityContainer}>
-        {task.priority && (
-          <Text
-            style={styles.priorityText}
-          >{`Priority: ${task.priority}`}</Text>
-        )}
-      </View>
+        </View>
 
-      <Text style={styles.dueDate}>
-        {isOverdue
-          ? `Overdue: ${formattedDueDate}`
-          : `Due: ${formattedDueDate}`}
-      </Text>
-
-      <View style={styles.actionButtonsContainer}>
-        {isEditing ? (
-          <TouchableOpacity style={styles.editButton} onPress={saveEdit}>
-            <Text style={styles.editButtonText}>Save</Text>
-          </TouchableOpacity>
-        ) : (
+        <View style={styles.actionButtonsContainer}>
           <TouchableOpacity
             style={styles.editButton}
             onPress={() => setIsEditing(true)}
           >
-            <Text style={styles.editButtonText}>Edit</Text>
+            <MaterialIcons name="edit" size={20} color="#fff" />
           </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => deleteTask(task.id)}
-        >
-          <Text style={styles.deleteButtonText}>Delete</Text>
-        </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => deleteTask(task.id)}
+          >
+            <MaterialIcons name="delete" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
+      
+
+      <Modal visible={isEditing} transparent={true} animationType="slide">
+        <KeyboardAvoidingView
+          style={styles.modalContainer}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <ScrollView contentContainerStyle={styles.modalContent}>
+            <TextInput
+              style={styles.input}
+              value={editedText}
+              onChangeText={setEditedText}
+              placeholder="Edit Task Name"
+              autoFocus
+            />
+
+            <View style={styles.priorityButtons}>
+              <TouchableOpacity
+                style={[
+                  styles.priorityButton,
+                  {
+                    borderColor: editedPriority === "High" ? "#FF6347" : "#ddd",
+                  },
+                ]}
+                disabled={true} 
+              >
+                <Text style={{ color: "#FF6347" }}>High</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.priorityButton,
+                  {
+                    borderColor:
+                      editedPriority === "Medium" ? "#4CAF50" : "#ddd",
+                  },
+                ]}
+                disabled={true} 
+              >
+                <Text style={{ color: "#4CAF50" }}>Medium</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.priorityButton,
+                  {
+                    borderColor: editedPriority === "Low" ? "#ADFF2F" : "#ddd",
+                  },
+                ]}
+                disabled={true} 
+              >
+                <Text style={{ color: "#ADFF2F" }}>Low</Text>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+              <Text style={styles.dueDate}>
+                {`Due Date: ${format(editedDueDate, "MMM dd, yyyy")}`}
+              </Text>
+            </TouchableOpacity>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={editedDueDate}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false);
+                  if (selectedDate) {
+                    setEditedDueDate(selectedDate);
+                  }
+                }}
+                disabled={true} 
+              />
+            )}
+            <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.saveButton} onPress={saveEdit}>
+              <Text style={styles.buttonText}>Save</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancleButton} onPress={() => setIsEditing(false)}>
+              <Text style={styles.buttonText}>Cancle</Text>
+            </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
