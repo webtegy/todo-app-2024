@@ -19,7 +19,7 @@ function DateItem({ date, selected, onPress }) {
   );
 }
 
-export default function CalendarPicker() {
+export default function CalendarPicker({ setDate}) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date(), { weekStartsOn: 1 })
@@ -38,6 +38,7 @@ export default function CalendarPicker() {
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
+    setDate(new Date(new Date(date).toLocaleDateString()))
   };
 
   const renderWeekDates = () => {

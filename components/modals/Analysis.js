@@ -5,6 +5,7 @@ import React , {useState} from 'react';
 import AIDescriptionCard from '../Analysis/AIDescription';
 import { ScrollView } from 'react-native-gesture-handler';
 import AiTaskItem from '../Analysis/AiTaskItem';
+import AsyncStorageService from '../../services/AsyncStorageService';
 
 
 export default function AnalysisModal(){
@@ -41,7 +42,7 @@ export default function AnalysisModal(){
                             <Ionicons name="close-circle" size={28} color="white" />
                         </Pressable>
 
-                        <Text style={styles.headerText}>Detailed Analysis</Text>
+                        <Text onPress={() => AsyncStorageService.resetTasks()} style={styles.headerText}>Detailed Analysis</Text>
                     </View>
 
                     <ScrollView style={styles.body}>
