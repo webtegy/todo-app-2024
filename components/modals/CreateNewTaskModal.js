@@ -6,14 +6,8 @@ import CalendarPicker from './CalendarView';
 import { ScrollView } from 'react-native-gesture-handler';
 import TodoService from '../../services/TodoService';
 import { TodoContext } from '../../store/store';
+import SelectableButton from '../SelectableButton';
 
-function SelectableButton({selected , text , pressEvent , padding}){
-    return (
-        <Pressable onPress={pressEvent} style={{ backgroundColor: selected ? '#FAD9FF' : "black" , borderRadius : 5 , paddingHorizontal : padding != undefined ? padding : 35  , paddingVertical : 5 , borderWidth : 1 , borderColor : '#FAD9FF' , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
-            <Text style={{ fontSize : 18 , color : selected ? 'black' : 'white' }}>{text}</Text>
-        </Pressable>
-    )
-}
 
 
 export default function CreateNewTaskModal() {
@@ -23,7 +17,7 @@ export default function CreateNewTaskModal() {
     const [formData , setFormData] = useState({
         title : '',
         description : '',
-        categoty: '',
+        category: '',
         priority: '',
         date: null
     })
@@ -58,7 +52,7 @@ export default function CreateNewTaskModal() {
         setFormData({
             title : '',
             description : '',
-            categoty: '',
+            category: '',
             priority: '',
             date: null
         })
@@ -69,7 +63,7 @@ export default function CreateNewTaskModal() {
     }
 
     const selectCategory = (text) => {
-        setFormData({...formData, categoty:text})
+        setFormData({...formData, category:text})
     }
 
     const selectDate = (newDate) => {
@@ -148,9 +142,9 @@ export default function CreateNewTaskModal() {
                         </View>
 
                         <View style={styles.priority}>
-                            <SelectableButton pressEvent={() => selectCategory('Work')} selected={formData.categoty == 'Work'} text={'Work'} />
-                            <SelectableButton pressEvent={() => selectCategory('Study')} selected={formData.categoty == 'Study'} text={'Study'} />
-                            <SelectableButton pressEvent={() => selectCategory('Personal')} padding={20} selected={formData.categoty == 'Personal'} text={'Personal'} />
+                            <SelectableButton pressEvent={() => selectCategory('Work')} selected={formData.category == 'Work'} text={'Work'} />
+                            <SelectableButton pressEvent={() => selectCategory('Study')} selected={formData.category == 'Study'} text={'Study'} />
+                            <SelectableButton pressEvent={() => selectCategory('Personal')} padding={20} selected={formData.category == 'Personal'} text={'Personal'} />
                         </View>
 
                         <TouchableOpacity onPress={handleCreateTask} style={{ backgroundColor : '#D682B9' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
