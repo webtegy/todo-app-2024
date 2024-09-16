@@ -6,28 +6,58 @@ import CalendarPicker from './CalendarView';
 import { ScrollView } from 'react-native-gesture-handler';
 import { TodoContext } from '../../store/store';
 import SelectableButton from '../SelectableButton';
-
+import TodoService from '../../services/TodoService';
 
 export default function EditTaskModal({item , modalVisible , closeModal}) {
 
     const {state, dispatch} = useContext(TodoContext);
     const [formData , setFormData] = useState(null)
+    const [selectedDate , setSelectedDate] = useState(null)
+
+    useEffect(() => {
+        console.log("date changes" , selectedDate)
+    }, [selectedDate])
 
     useEffect(() => {
         setFormData(item)
     }, [item])
 
+    useEffect(() => {
+        console.log('tasks list updated!')
+    }, [state.tasks])
 
     const selectPriority = (text) => {
         setFormData({...formData, priority:text})
     }
 
     const selectCategory = (text) => {
-        setFormData({...formData, categoty:text})
+        setFormData({...formData, category:text})
+    }
+
+    const handleFormatDate = (date) => {
+        const correctedDate = new Date(date)
+        setSelectedDate(correctedDate)
+        setFormData({...formData, date: correctedDate})
     }
 
     if(!item || !formData) {
         return
+    }
+
+    const updateTask = async () => {
+
+        const updatedTasks = state.tasks.map(t => t.id === formData.id ? formData : t);
+
+        const res = await TodoService.updateTask(formData , updatedTasks)
+
+        if(!res.success){
+            alert(res.message)
+            return
+        }
+
+        dispatch({ type: 'LOAD_TASKS', payload: res.message });
+        alert("Task edited successfully!")
+
     }
         
     return (
@@ -38,8 +68,6 @@ export default function EditTaskModal({item , modalVisible , closeModal}) {
                 transparent={false}
                 visible={modalVisible}
                 onRequestClose={closeModal}
-
-                
             >
                 <SafeAreaView style={styles.container}>
 
@@ -47,12 +75,12 @@ export default function EditTaskModal({item , modalVisible , closeModal}) {
                         <Pressable style={{ display : 'flex' , justifyContent: 'flex-start' }} onPress={closeModal}>
                             <Ionicons name="close-circle" size={28} color="white" />
                         </Pressable>
-                        <Text style={styles.headerText}>{item.title}</Text>
+                        <Text style={styles.headerText}>{formData.title}</Text>
                     </View>
 
                     <ScrollView style={{ paddingBottom : 20 }}>
                         <View style={styles.calendarArea}>
-                            <CalendarPicker gotDate={new Date(item.date)} />
+                            <CalendarPicker setDate={handleFormatDate} gotDate={new Date(item.date)} />
                         </View>
 
                         <View style={{ marginTop : 20 }}>
@@ -66,6 +94,7 @@ export default function EditTaskModal({item , modalVisible , closeModal}) {
                                 size='large'
                                 placeholder='Name'
                                 value={formData.title}
+                                onChangeText={(text) => setFormData({...formData, title : text})}
                             />
 
                             <View style={{ marginTop:20}}>
@@ -76,6 +105,7 @@ export default function EditTaskModal({item , modalVisible , closeModal}) {
                                     multiline={true}
                                     numberOfLines={10}
                                     value={formData.description}
+                                    onChangeText={(text) => setFormData({...formData, description : text})}
                                 />
                             </View>
                         </View>
@@ -102,7 +132,7 @@ export default function EditTaskModal({item , modalVisible , closeModal}) {
     
                         <View style={{ display : 'flex' , justifyContent : 'space-between',  flexDirection : 'row'}}>
                             
-                            <TouchableOpacity style={{ width : '48%' , backgroundColor : '#D682B9' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
+                            <TouchableOpacity onPress={() => updateTask()} style={{ width : '48%' , backgroundColor : '#D682B9' , padding : 15 , marginTop : 35 , borderRadius : 5 , display : 'flex' , justifyContent : 'center' , alignItems : 'center' }}>
                                 <Text style={{ fontSize : 18 , color : 'white' }}>Edit Task</Text>
                             </TouchableOpacity>
 

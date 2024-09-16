@@ -41,7 +41,7 @@ export default function CreateNewTaskModal() {
     };
 
     const handleCreateTask = async() => {
-        const res = await TodoService.createNewTask(formData.title , formData.description , formData.priority , formData.categoty , formData.date)
+        const res = await TodoService.createNewTask(formData.title , formData.description , formData.priority , formData.category , formData.date)
             
         if(!res.success){
             alert(res.message)
@@ -67,9 +67,8 @@ export default function CreateNewTaskModal() {
     }
 
     const selectDate = (newDate) => {
-        correctedDate = new Date(newDate);
-        correctedDate.setDate(correctedDate.getDate()+1);
-        setFormData({...formData, date: new Date(correctedDate)});
+        const correctedDate = new Date(newDate)
+        setFormData({...formData, date: correctedDate})
     }
 
 
