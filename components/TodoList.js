@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react';
+
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import TodoItem from './TodoItem';
 
 const getTimeBasedBackgroundColor = (highContrast) => {
@@ -24,37 +26,84 @@ const getTimeBasedBackgroundColor = (highContrast) => {
   }
 };
 
-export default function TodoList() {
-  const [tasks, setTasks] = useState([
-    { id: 1, text: 'Doctor Appointment', completed: true },
-    { id: 2, text: 'Meeting at School', completed: false },
-  ]);
-  const [text, setText] = useState('');
-  const [highContrast, setHighContrast] = useState(false);
 
-  // Get time-based background color
-  const backgroundColor = useMemo(() => getTimeBasedBackgroundColor(highContrast), [highContrast]);
 
   // Function to Add Task
+export default function TodoList() {
+  const [tasks, setTasks] = useState([]);
+  const [text, setText] = useState('');
+    const [highContrast, setHighContrast] = useState(false);
+  // Get time-based background color
+  const backgroundColor = useMemo(() => getTimeBasedBackgroundColor(highContrast), [highContrast]);
+  const [priority, setPriority] = useState('Medium');
+
+  // Load tasks from AsyncStorage when the component mounts
+  useEffect(() => {
+    async function loadTasks() {
+      try {
+        const storedTasks = await AsyncStorage.getItem('tasks');
+        if (storedTasks) {
+          setTasks(JSON.parse(storedTasks));
+        }
+      } catch (error) {
+        console.error('Failed to load tasks', error);
+      }
+    }
+    loadTasks();
+  }, []);
+
+  // Save tasks to AsyncStorage whenever tasks state changes
+  useEffect(() => {
+    async function saveTasks() {
+      try {
+        await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
+      } catch (error) {
+        console.error('Failed to save tasks', error);
+      }
+    }
+    if (tasks.length > 0) {
+      saveTasks();
+    }
+  }, [tasks]);
+
   function addTask() {
-    const newTask = { id: Date.now(), text, completed: false };
+    if (!text.trim()) return;
+    const newTask = { id: Date.now(), text, completed: false, priority };
     setTasks([...tasks, newTask]);
     setText('');
+    setPriority('Medium');
   }
 
-  // Function to Delete Task
+
+  // Function to delete task
   function deleteTask(id) {
     setTasks(tasks.filter(task => task.id !== id));
   }
 
-  // Function to Toggle Task Completion
+
+  // Function to toggle task completion
   function toggleCompleted(id) {
     setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)));
   }
 
+
+   // Function to cycle through priorities
+  function cyclePriority() {
+    const nextPriority = priority === 'High' ? 'Medium' : priority === 'Medium' ? 'Low' : 'High';
+    setPriority(nextPriority);
+  }
+  
+  
+  // Sort tasks by priority ("High" > "Medium" > "Low")
+  const sortedTasks = tasks.sort((a, b) => {
+    const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+    return priorityOrder[a.priority] - priorityOrder[b.priority];
+  });
+  
   // Set text color based on high contrast mode
   const textColor = highContrast ? '#FFFFFF' : '#333333'; // White for dark theme, dark gray for light theme
 
+  
   return (
     <View style={[styles.container, { backgroundColor }]}>
       {/* Header Row with Title and Toggle */}
@@ -83,12 +132,13 @@ export default function TodoList() {
       </View>
 
       {/* Task List */}
-      {tasks.map(task => (
+     {sortedTasks.map(task => (
         <TodoItem
           key={task.id}
           task={task}
           deleteTask={deleteTask}
           toggleCompleted={toggleCompleted}
+
           textColor={textColor} // Pass the text color to the TodoItem component
         />
       ))}
@@ -172,3 +222,4 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
+

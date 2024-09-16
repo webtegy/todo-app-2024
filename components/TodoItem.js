@@ -39,9 +39,30 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
   },
+  
+ // Style for the priority dot
+  priorityDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 10,
+  },
 });
 
 export default function TodoItem({ task, deleteTask, toggleCompleted, textColor }) {
+  // Function to determine dot color based on priority
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'High':
+        return '#FF6347'; // Red
+      case 'Medium':
+        return '#FFA500'; // Orange
+      case 'Low':
+        return '#4CAF50'; // Green
+      default:
+        return '#ccc'; // Default grey
+    }
+  };
   return (
     <View style={[styles.todoItem, { backgroundColor: textColor === '#FFFFFF' ? '#333' : '#f9f9f9' }]}>
       <View style={styles.checkboxContainer}>
@@ -52,11 +73,15 @@ export default function TodoItem({ task, deleteTask, toggleCompleted, textColor 
           tintColors={{ true: '#4CAF50', false: '#ccc' }} // Green when checked
         />
       </View>
+
+      {/* Add the priority dot here */}
+      <View style={[styles.priorityDot, { backgroundColor: getPriorityColor(task.priority) }]} />
       <Text
         style={[styles.todoItemText, { color: textColor }, task.completed && styles.completed]}
         accessibilityLabel={task.text}
         accessibilityRole="text"
       >
+
         {task.text}
       </Text>
       <TouchableOpacity
