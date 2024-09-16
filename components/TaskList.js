@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, CheckBox, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { CheckBox } from 'react-native-web';
 import { useNavigation } from '@react-navigation/native';
 import { TaskContext } from '../context/TaskContext'; 
 
