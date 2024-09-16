@@ -1,5 +1,6 @@
-import React from 'react';
-import { View, Text, CheckBox, Button, TouchableOpacity, StyleSheet } from 'react-native';
+import Checkbox from 'expo-checkbox';
+import React,{useState,useEffect} from 'react';
+import { View, Text, Button, Pressable, StyleSheet,Platform } from 'react-native';
 
 
 const styles = StyleSheet.create({
@@ -14,10 +15,10 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       borderWidth: 1,
       borderColor: '#ddd',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
-      shadowRadius: 2,
+      boxShadowColor: '#000',
+      boxShadowOffset: { width: 0, height: 1 },
+      boxShadowOpacity: 0.1,
+      boxShadowRadius: 2,
       elevation: 2,
     },
     checkboxContainer: {
@@ -46,10 +47,18 @@ const styles = StyleSheet.create({
   
 
 export default function TodoItem({ task, deleteTask, toggleCompleted }) {
+    const [inputWidth, setInputWidth] = useState(0);
+    useEffect(() => {
+      if (Platform.OS === 'web') {
+        setInputWidth(750);
+      } else {
+        setInputWidth('100%');
+      }
+    }, []);
     return (
-        <View style={styles.todoItem}>
+        <View style={[styles.todoItem,{minWidth:inputWidth}]}>
         <View style={styles.checkboxContainer}>
-          <CheckBox
+          <Checkbox
             value={task.completed}
             onValueChange={() => toggleCompleted(task.id)}
             tintColors={{ true: '#4CAF50', false: '#ccc' }} // Green when checked
@@ -58,12 +67,12 @@ export default function TodoItem({ task, deleteTask, toggleCompleted }) {
         <Text style={[styles.todoItemText, task.completed && styles.completed]}>
           {task.text}
         </Text>
-        <TouchableOpacity
+        <Pressable
           style={styles.deleteButton}
           onPress={() => deleteTask(task.id)}
         >
           <Text style={styles.deleteButtonText}>Delete</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
