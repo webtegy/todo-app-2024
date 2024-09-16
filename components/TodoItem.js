@@ -9,7 +9,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginVertical: 5,
-    backgroundColor: '#f9f9f9',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ddd',
@@ -25,7 +24,6 @@ const styles = StyleSheet.create({
   todoItemText: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
   },
   completed: {
     textDecorationLine: 'line-through',
@@ -41,6 +39,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
   },
+<<<<<<< HEAD
+=======
+  
+ // Style for the priority dot
+>>>>>>> 31e522a250c365e6249d9e5d39ddecb994931c80
   priorityDot: {
     width: 12,
     height: 12,
@@ -58,6 +61,7 @@ const styles = StyleSheet.create({
   }
 });
 
+<<<<<<< HEAD
 export default function TodoItem({ task, deleteTask, toggleCompleted }) {
   const [fadeAnim] = React.useState(new Animated.Value(0)); // Initial opacity 0
 
@@ -69,6 +73,10 @@ export default function TodoItem({ task, deleteTask, toggleCompleted }) {
     }).start();
   }, []);
 
+=======
+export default function TodoItem({ task, deleteTask, toggleCompleted, textColor }) {
+  // Function to determine dot color based on priority
+>>>>>>> 31e522a250c365e6249d9e5d39ddecb994931c80
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'High': return '#FF6347';
@@ -77,16 +85,21 @@ export default function TodoItem({ task, deleteTask, toggleCompleted }) {
       default: return '#ccc';
     }
   };
-
   return (
+<<<<<<< HEAD
     <Animated.View style={[styles.todoItem, { opacity: fadeAnim }]}>
+=======
+    <View style={[styles.todoItem, { backgroundColor: textColor === '#FFFFFF' ? '#333' : '#f9f9f9' }]}>
+>>>>>>> 31e522a250c365e6249d9e5d39ddecb994931c80
       <View style={styles.checkboxContainer}>
         <CheckBox
+          accessibilityLabel={`Toggle ${task.completed ? 'unchecked' : 'checked'} for ${task.text}`}
           value={task.completed}
           onValueChange={() => toggleCompleted(task.id)}
           tintColors={{ true: '#4CAF50', false: '#ccc' }}
         />
       </View>
+<<<<<<< HEAD
       <View style={[styles.priorityDot, { backgroundColor: getPriorityColor(task.priority) }]} />
       <View style={{ flex: 1 }}>
         <Text style={[styles.todoItemText, task.completed && styles.completed]}>{task.text}</Text>
@@ -96,6 +109,25 @@ export default function TodoItem({ task, deleteTask, toggleCompleted }) {
         ))}
       </View>
       <TouchableOpacity style={styles.deleteButton} onPress={() => deleteTask(task.id)}>
+=======
+
+      {/* Add the priority dot here */}
+      <View style={[styles.priorityDot, { backgroundColor: getPriorityColor(task.priority) }]} />
+      <Text
+        style={[styles.todoItemText, { color: textColor }, task.completed && styles.completed]}
+        accessibilityLabel={task.text}
+        accessibilityRole="text"
+      >
+
+        {task.text}
+      </Text>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => deleteTask(task.id)}
+        accessibilityLabel={`Delete ${task.text}`}
+        accessibilityHint="Remove the task from the list"
+      >
+>>>>>>> 31e522a250c365e6249d9e5d39ddecb994931c80
         <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
     </Animated.View>
