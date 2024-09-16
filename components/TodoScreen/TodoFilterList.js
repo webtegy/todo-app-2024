@@ -23,7 +23,7 @@ export default function TodoFilterList({task , list}) {
                 <Text style={[styles.taskText , {fontSize: 20 , marginVertical: 'auto'}]}>{task}</Text>
             </View>
             {list.map((item , index) => (<TaskItem pressEvent={setSelectedItemForModal} item={item} key={index} />))}
-            <EditTaskModal closeModal={() => closeModal()} modalVisible={modalVisible} />
+            <EditTaskModal item={selectedItem} closeModal={() => closeModal()} modalVisible={modalVisible} />
         </View>
     )
 }

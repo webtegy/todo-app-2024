@@ -1,13 +1,21 @@
-import React , {useState} from 'react';
+import React , {useState , useContext} from 'react';
 import { View,  StyleSheet , Text, Modal, Pressable , TouchableOpacity , TextInput} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CalendarPicker from './CalendarView';
 import { ScrollView } from 'react-native-gesture-handler';
+import TodoService from '../../services/TodoService';
+import { TodoContext } from '../../store/store';
 
-export default function EditTaskModal({modalVisible , closeModal}) {
 
-    // const [modalVisible, setModalVisible] = useState(false);
+export default function EditTaskModal({item , modalVisible , closeModal}) {
+
+    const {state, dispatch} = useContext(TodoContext);
+    const [formData , setFormData] = useState(item)
+
+    if(!item) {
+        return
+    }
 
     return (
         <View>
@@ -28,7 +36,7 @@ export default function EditTaskModal({modalVisible , closeModal}) {
                         <Pressable style={{ display : 'flex' , justifyContent: 'flex-start' }} onPress={closeModal}>
                             <Ionicons name="close-circle" size={28} color="white" />
                         </Pressable>
-                        <Text style={styles.headerText}>Mobile App Research</Text>
+                        <Text style={styles.headerText}>{item.title}</Text>
                     </View>
 
                     <ScrollView style={{ paddingBottom : 20 }}>
@@ -46,6 +54,7 @@ export default function EditTaskModal({modalVisible , closeModal}) {
                                 style={{backgroundColor: '#181818' , padding : 10 , color: 'white' , borderRadius : 5 , height : 40}}
                                 size='large'
                                 placeholder='Name'
+                                value={formData && formData.title}
                             />
 
                             <View style={{ marginTop:20}}>

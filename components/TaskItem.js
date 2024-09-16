@@ -9,7 +9,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 export default function TaskItem({item , pressEvent}) {
     return (
         <View style={styles.container}>
+            
             <View style={{ flexDirection : 'row' , justifyContent: 'space-between' , flex : 1 }}>
+                
                 <TouchableOpacity style={{ display : 'flex' , flex: 1 }} onPress={() => pressEvent(item)}>
                     <Text style={[styles.taskText , {color:'white' , fontSize: 17 , marginVertical: 'auto'}]}>{item.title}</Text>
                     <View style={{ display : 'flex', marginTop : 5, flexDirection : 'row'}}>
@@ -17,14 +19,15 @@ export default function TaskItem({item , pressEvent}) {
                         <Text style={[styles.taskText , { fontWeight: 'bold',  color:'gray' , fontSize: 14 , marginVertical: 'auto'}]}>{format(new Date(item.date), 'd MMM')}</Text>
                     </View>
                 </TouchableOpacity >
-                <TouchableOpacity onPress={() => pressEvent(item)} style={{ width : 'auto' , paddingHorizontal : '30%' }}>
 
-                </TouchableOpacity>
+                <TouchableOpacity onPress={() => pressEvent(item)} style={{ width : 'auto' , paddingHorizontal : '30%' }}></TouchableOpacity>
+                
                 <View style={{ marginVertical: 'auto' }}>
                     <CheckButton />
                 </View>
 
             </View>
+        
         </View>
     )
 }
