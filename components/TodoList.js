@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
@@ -154,6 +153,9 @@ export default function TodoList() {
           placeholder="New Task"
           placeholderTextColor={highContrast ? '#AAAAAA' : '#999'} // Adjust placeholder color for dark theme
         />
+         <TouchableOpacity style={styles.priorityButton} onPress={cyclePriority}>
+          <Text style={styles.priorityButtonText}>{priority}</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel="Add task"
@@ -200,6 +202,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 10,
   },
+  priorityButton: {
+    backgroundColor: '#ff9800',
+    padding: 10,
+    borderRadius: 8,
+    marginLeft: 10,
+  },
+  priorityButtonText: {
+    color: '#fff',
+  },
   addButton: {
     marginLeft: 10,
     backgroundColor: '#4CAF50',
