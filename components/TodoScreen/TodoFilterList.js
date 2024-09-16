@@ -30,6 +30,7 @@ export default function TodoFilterList({task , list}) {
 
 
 const styles = StyleSheet.create({
+    
     task: {
         marginVertical: 10,
         borderRadius: 5

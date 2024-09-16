@@ -19,16 +19,14 @@ export default function EditTaskModal({item , modalVisible , closeModal}) {
 
     return (
         <View>
-            
-            {/* <Pressable style={{ marginVertical : 'auto', marginRight : 10 }} onPress={openModal}>
-                <Ionicons name="add-circle" size={28} color="white" />
-            </Pressable> */}
-
+        
             <Modal
                 animationType="slide"
                 transparent={false}
                 visible={modalVisible}
                 onRequestClose={closeModal}
+
+                
             >
                 <SafeAreaView style={styles.container}>
 
