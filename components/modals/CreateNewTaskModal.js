@@ -23,17 +23,16 @@ export default function CreateNewTaskModal() {
     const [formData , setFormData] = useState({
         title : '',
         description : '',
-        date : '',
         categoty: '',
         priority: '',
         date: null
     })
 
-    const [date , getDate] = useState(null);
+    // const [date , getDate] = useState(null);
     
-    useEffect(() => {
-        selectDate(date)
-    }, [date])
+    // useEffect(() => {
+    //     selectDate(date)
+    // }, [date])
 
     useEffect(() => {
         console.log('state date : ' , state.tasks)
@@ -59,7 +58,6 @@ export default function CreateNewTaskModal() {
         setFormData({
             title : '',
             description : '',
-            date : '',
             categoty: '',
             priority: '',
             date: null
@@ -75,7 +73,9 @@ export default function CreateNewTaskModal() {
     }
 
     const selectDate = (newDate) => {
-        setFormData({...formData, date: new Date(newDate)})
+        correctedDate = new Date(newDate);
+        correctedDate.setDate(correctedDate.getDate()+1);
+        setFormData({...formData, date: new Date(correctedDate)});
     }
 
 
@@ -103,7 +103,7 @@ export default function CreateNewTaskModal() {
 
                     <ScrollView style={{ paddingBottom : 20 }}>
                         <View style={styles.calendarArea}>
-                            <CalendarPicker setDate={getDate} />
+                            <CalendarPicker setDate={selectDate} />
                         </View>
 
                         <View style={{ marginTop : 20 }}>
