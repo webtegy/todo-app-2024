@@ -1,253 +1,259 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, Switch, TouchableOpacity, TextInput, StyleSheet, Modal, Button } from 'react-native';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { View, Text, CheckBox, TouchableOpacity, StyleSheet, TextInput, Modal, DatePickerAndroid } from 'react-native';
 
 const styles = StyleSheet.create({
-    todoItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        marginVertical: 5,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-    checkboxContainer: {
-        marginRight: 10,
-    },
-    todoItemText: {
-        flex: 1,
-        fontSize: 16,
-        color: '#333',
-    },
-    completed: {
-        textDecorationLine: 'line-through',
-        color: '#999',
-    },
-    button: {
-        paddingVertical: 6,
-        paddingHorizontal: 10,
-        borderRadius: 5,
-        margin: 3,
-        minWidth: 60,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    deleteButton: {
-        backgroundColor: '#FF6347',
-    },
-    deleteButtonText: {
-        color: '#fff',
-        fontSize: 14,
-    },
-    pinButton: {
-        backgroundColor: '#87CEEB',
-    },
-    pinButtonText: {
-        fontSize: 14,
-        color: '#fff',
-    },
-    itemNumber: {
-        fontSize: 14,
-        color: '#333',
-        marginRight: 10,
-    },
-    editInput: {
-        flex: 1,
-        fontSize: 14,
-        color: '#333',
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
-    },
-    dateText: {
-        fontSize: 12,
-        color: '#666',
-        marginTop: 4,
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    modalText: {
-        marginBottom: 15,
-        textAlign: 'center',
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderBottomWidth: 1,
-        marginBottom: 10,
-        width: 200,
-        textAlign: 'center',
-    },
+  todoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+    elevation: 3,
+  },
+  checkboxContainer: {
+    marginRight: 10,
+  },
+  priorityDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  todoItemText: {
+    flex: 1,
+    fontSize: 16,
+  },
+  completed: {
+    textDecorationLine: 'line-through',
+    color: '#999',
+  },
+  editButton: {
+    backgroundColor: '#1E90FF',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  deleteButton: {
+    backgroundColor: '#FF6347',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  textInput: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  priorityButton: {
+    backgroundColor: '#1E90FF',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  priorityButtonText: {
+    color: '#fff',
+  },
+  modalButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  moreButton: {
+    backgroundColor: '#1E90FF',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  moreButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  datePickerButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  datePickerButtonText: {
+    color: '#fff',
+  },
 });
 
-function formatDate(date) {
-    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(date).toLocaleDateString(undefined, options);
-}
+export default function TodoItem({ task, deleteTask, toggleCompleted, textColor, editTask }) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [moreModalVisible, setMoreModalVisible] = useState(false);
+  const [newText, setNewText] = useState(task.text);
+  const [newPriority, setNewPriority] = useState(task.priority);
+  const [endDate, setEndDate] = useState(task.endDate || '');
 
-export default function TodoItem({ itemNumber, task, deleteTask, toggleCompleted, renameTask, togglePin }) {
-    const [isEditing, setIsEditing] = useState(false);
-    const [isDetailsVisible, setIsDetailsVisible] = useState(false);
-    const [newText, setNewText] = useState(task.text);
-    const [finishDate, setFinishDate] = useState(task.finishDate || '');
-    const [finishTime, setFinishTime] = useState(task.finishTime || '');
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'High':
+        return '#FF6347'; // Red
+      case 'Medium':
+        return '#FFA500'; // Orange
+      case 'Low':
+        return '#4CAF50'; // Green
+      default:
+        return '#ccc'; // Default grey
+    }
+  };
 
-    const handleRename = useCallback(() => {
-        if (newText.trim()) {
-            renameTask(task.id, newText.trim(), finishDate, finishTime);
-        }
-        setIsEditing(false);
-    }, [newText, finishDate, finishTime, renameTask, task.id]);
+  const handleSaveEdit = () => {
+    editTask(task.id, newText, newPriority, endDate);
+    setModalVisible(false);
+  };
 
-    return (
-        <View style={styles.todoItem}>
-            <Text style={styles.itemNumber}>{itemNumber}.</Text>
-            <View style={styles.checkboxContainer}>
-                <Switch
-                    value={task.completed}
-                    onValueChange={() => toggleCompleted(task.id)}
-                    trackColor={{ true: '#4CAF50', false: '#ccc' }}
-                    thumbColor={task.completed ? '#fff' : '#888'}
-                    accessibilityLabel={`Mark as ${task.completed ? 'incomplete' : 'complete'}`}
-                />
-            </View>
-            {isEditing ? (
-                <View style={{ flex: 1 }}>
-                    <TextInput
-                        style={styles.editInput}
-                        value={newText}
-                        onChangeText={setNewText}
-                        onSubmitEditing={handleRename}
-                        onBlur={handleRename}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Finish Date (YYYY-MM-DD)"
-                        value={finishDate}
-                        onChangeText={setFinishDate}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Finish Time (HH:MM)"
-                        value={finishTime}
-                        onChangeText={setFinishTime}
-                    />
-                </View>
-            ) : (
-                <View style={{ flex: 1 }}>
-                    <Text style={[styles.todoItemText, task.completed && styles.completed]}>
-                        {task.text}
-                    </Text>
-                    <Text style={styles.dateText}>Created: {formatDate(task.createdAt)}</Text>
-                    {task.finishDate && (
-                        <Text style={styles.dateText}>Finish: {formatDate(`${task.finishDate}T${task.finishTime}`)}</Text>
-                    )}
-                </View>
-            )}
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <TouchableOpacity
-                    style={[styles.button, styles.pinButton]}
-                    onPress={() => togglePin(task.id)}
-                    accessibilityLabel={task.pinned ? 'Unpin task' : 'Pin task'}
-                >
-                    <Text style={styles.pinButtonText}>{task.pinned ? 'Unpin' : 'Pin'}</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity
-                    style={[styles.button, styles.pinButton]}
-                    onPress={() => setIsDetailsVisible(true)}
-                    accessibilityLabel="More"
-                >
-                    <Text style={styles.pinButtonText}>More</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.button, styles.deleteButton]}
-                    onPress={() => deleteTask(task.id)}
-                    accessibilityLabel="Delete task"
-                >
-                    <Text style={styles.deleteButtonText}>Delete</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.button, styles.deleteButton]}
-                    onPress={() => setIsEditing(!isEditing)}
-                    accessibilityLabel={isEditing ? 'Save changes' : 'Edit task'}
-                >
-                    <Text style={styles.deleteButtonText}>{isEditing ? 'Save' : 'Edit'}</Text>
-                </TouchableOpacity>
-            </View>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isDetailsVisible}
-                onRequestClose={() => {
-                    setIsDetailsVisible(!isDetailsVisible);
-                }}
+  const handleSaveEndDate = (date) => {
+    setEndDate(date);
+    setMoreModalVisible(false);
+  };
+
+  const showDatePicker = async () => {
+    try {
+      const { action, year, month, day } = await DatePickerAndroid.open({
+        date: new Date(),
+      });
+      if (action !== DatePickerAndroid.dismissedAction) {
+        const selectedDate = new Date(year, month, day);
+        handleSaveEndDate(selectedDate.toISOString().split('T')[0]);
+      }
+    } catch (error) {
+      console.warn('Cannot open date picker', error);
+    }
+  };
+
+  return (
+    <View style={[styles.todoItem, { backgroundColor: textColor === '#FFFFFF' ? '#333' : '#f9f9f9' }]}>
+      <View style={styles.checkboxContainer}>
+        <CheckBox
+          value={task.completed}
+          onValueChange={() => toggleCompleted(task.id)}
+          tintColors={{ true: '#4CAF50', false: '#ccc' }}
+        />
+      </View>
+      <View style={[styles.priorityDot, { backgroundColor: getPriorityColor(task.priority) }]} />
+      <Text
+        style={[styles.todoItemText, { color: textColor }, task.completed && styles.completed]}
+      >
+        {task.text}
+      </Text>
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.editButtonText}>Edit</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.moreButton}
+        onPress={() => setMoreModalVisible(true)}
+      >
+        <Text style={styles.moreButtonText}>More</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => deleteTask(task.id)}
+      >
+        <Text style={styles.deleteButtonText}>Delete</Text>
+      </TouchableOpacity>
+
+      {/* Modal for editing task */}
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TextInput
+              style={[styles.textInput, { color: textColor }]}
+              value={newText}
+              onChangeText={setNewText}
+              placeholder="Edit task"
+              placeholderTextColor="#999"
+            />
+            <TextInput
+              style={[styles.textInput, { color: textColor }]}
+              value={newPriority}
+              onChangeText={setNewPriority}
+              placeholder="Priority (High/Medium/Low)"
+              placeholderTextColor="#999"
+            />
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={handleSaveEdit}
             >
-                <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Finish Date and Time</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Finish Date (YYYY-MM-DD)"
-                        value={finishDate}
-                        onChangeText={setFinishDate}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Finish Time (HH:MM)"
-                        value={finishTime}
-                        onChangeText={setFinishTime}
-                    />
-                    <Button
-                        title="Save"
-                        onPress={() => {
-                            renameTask(task.id, task.text, finishDate, finishTime);
-                            setIsDetailsVisible(!isDetailsVisible);
-                        }}
-                    />
-                    <Button
-                        title="Cancel"
-                        color="red"
-                        onPress={() => setIsDetailsVisible(!isDetailsVisible)}
-                    />
-                </View>
-            </Modal>
+              <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-    );
+      </Modal>
+
+      {/* Modal for more info */}
+      <Modal
+        visible={moreModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setMoreModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.text, { color: textColor }]}>Created: {task.creationDate}</Text>
+            <Text style={[styles.text, { color: textColor }]}>End Date: {task.endDate || 'N/A'}</Text>
+            <TouchableOpacity
+              style={styles.dateButton}
+              onPress={showDatePicker}
+            >
+              <Text style={styles.dateButtonText}>Set End Date</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setMoreModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
 }
-
-TodoItem.propTypes = {
-    itemNumber: PropTypes.number.isRequired,
-    task: PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        text: PropTypes.string.isRequired,
-        completed: PropTypes.bool.isRequired,
-        pinned: PropTypes.bool.isRequired,
-        createdAt: PropTypes.instanceOf(Date).isRequired,
-        finishDate: PropTypes.string,
-        finishTime: PropTypes.string,
-    }).isRequired,
-    deleteTask: PropTypes.func.isRequired,
-    toggleCompleted: PropTypes.func.isRequired,
-    renameTask: PropTypes.func.isRequired,
-    togglePin: PropTypes.func.isRequired,
-};
-
- 
