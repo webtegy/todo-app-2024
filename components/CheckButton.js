@@ -5,7 +5,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 export default function CheckButton(){
     return (
         <TouchableOpacity style={styles.checkButton}>
-            <AntDesign name="check" size={16} color="black" />
+            <AntDesign name="check" size={16} color="#000" />
         </TouchableOpacity>
     )
 }

@@ -1,21 +1,51 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { View,  StyleSheet , Text , TouchableOpacity } from 'react-native';
 import TaskItem from '../TaskItem';
+import {TodoContext} from '../../store/store';
 
-export default function TodayTask({task}) {
+
+export default function TodayTask({task, list}) {
+    let today=new Date();
     return (
         <View style={styles.task}>
             <View style={{marginBottom: 10, flexDirection : 'row' , justifyContent: 'space-between' }}>
-                <Text style={[styles.taskText , {fontSize: 20 , marginVertical: 'auto'}]}>{task}</Text>
+                <Text style={[styles.taskText , {fontSize: 20 , marginVertical: 'auto'}]}>{task==1?"Today's tasks":task==2?"Tomorrow's tasks":"Upcoming Tasks"}</Text>
                 <TouchableOpacity style={{marginVertical: 'auto'}}>
                     <Text style={[styles.taskComplete , {color : '#BA83DE'}]}>See All</Text>
                 </TouchableOpacity>
             </View>
 
-            <TaskItem />
-            <TaskItem />
-            <TaskItem />
+        
+            {task === 1 ? 
+                list.map((singletask) => {
+                    const taskDate = new Date(singletask.date); 
+                    return taskDate.toLocaleDateString() === today.toLocaleDateString() ? (
+                        <TaskItem item={singletask} key={singletask.id} />
+                    ) : null;
+                }) 
+            : 
+            task===2?
+                list.map((singletask) => {
+                    const taskDate = new Date(singletask.date);
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate()+1)
+                    return taskDate.toLocaleDateString() === tomorrow.toLocaleDateString() ? (
+                        <TaskItem item={singletask} key={singletask.id} />
+                    ) : null;
+                })
+            :
+                list.map((singletask) => {
+                    const taskDate = new Date(singletask.date);
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate()+1)
+                    return taskDate.toLocaleDateString()>tomorrow.toLocaleDateString() ? (
+                        <TaskItem item={singletask} key={singletask.id} />
+                    ):null;
+                })
+            }
 
+
+        <Text onTextLayout={print}></Text>
         </View>
     )
 }

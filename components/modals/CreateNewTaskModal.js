@@ -16,7 +16,7 @@ function SelectableButton({selected , text , pressEvent , padding}){
 }
 
 
-export default function CreateNewTaskModal() {
+export default function CreateNewTaskModal({update}) {
     const {state, dispatch} = useContext(TodoContext);
     const [modalVisible, setModalVisible] = useState(false);
    
@@ -44,6 +44,7 @@ export default function CreateNewTaskModal() {
     
     const closeModal = () => {
         setModalVisible(false);
+        update(true);
     };
 
     const handleCreateTask = async() => {
@@ -73,9 +74,7 @@ export default function CreateNewTaskModal() {
     }
 
     const selectDate = (newDate) => {
-        correctedDate = new Date(newDate);
-        correctedDate.setDate(correctedDate.getDate()+1);
-        setFormData({...formData, date: new Date(correctedDate)});
+        setFormData({...formData, date: new Date(newDate)});
     }
 
 
