@@ -19,6 +19,7 @@ export default {
 
     resetTasks: async function(){
         await AsyncStorage.removeItem('taskList');
+        await AsyncStorage.removeItem('newUser');
     },
 
     updateTask: async function(updatedTask){
@@ -33,6 +34,16 @@ export default {
 
         await AsyncStorage.setItem('taskList', JSON.stringify(tasks));
     
+    },
+
+    isNewUser: async function() {
+        const isNewUser = await AsyncStorage.getItem('newUser');
+        if (!isNewUser) {
+            await AsyncStorage.setItem('newUser', 'false');
+            return true; 
+        } else {
+            return false;
+        }
     }
 
 }

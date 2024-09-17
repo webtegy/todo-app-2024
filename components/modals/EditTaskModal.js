@@ -15,7 +15,7 @@ export default function EditTaskModal({item , modalVisible , closeModal}) {
     const [selectedDate , setSelectedDate] = useState(null)
 
     useEffect(() => {
-        console.log("date changes" , selectedDate)
+        
     }, [selectedDate])
 
     useEffect(() => {
@@ -23,7 +23,7 @@ export default function EditTaskModal({item , modalVisible , closeModal}) {
     }, [item])
 
     useEffect(() => {
-        console.log('tasks list updated!')
+
     }, [state.tasks])
 
     const selectPriority = (text) => {

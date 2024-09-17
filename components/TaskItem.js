@@ -1,17 +1,29 @@
-import React from 'react';
+import React , {useState , useContext} from 'react';
 import {  View,  StyleSheet , Text, TouchableWithoutFeedback  } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CheckButton from './CheckButton';
 import { format } from 'date-fns';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import TodoService from '../services/TodoService';
+import { TodoContext  } from '../store/store';
 
 export default function TaskItem({item , pressEvent}) {
+    const { state , dispatch } = useContext(TodoContext);
+    const [task , setTask] = useState(item)
+
+    const toggleStatus = async() => {
+        setTask({...task ,  completed : !task.completed })
+        const updatedTasks = state.tasks.map(t => t.id === task.id ? task : t);
+        // console.log("updated ones are -> " , updatedTasks)
+        const res = await TodoService.updateTask(task , updatedTasks)
+        console.log("output => " , task )
+        dispatch({ type: 'LOAD_TASKS', payload: res.message });
+    }
 
     return (
-        <TouchableOpacity onPress={pressEvent} style={styles.container}>
+        <View style={styles.container}>
             
-            <View style={{ flexDirection : 'row' , justifyContent: 'space-between' , flex : 1 }}>
+            <TouchableOpacity  onPress={pressEvent} style={{}}>
                 
                 <View style={{ display : 'flex' , flex: 1 }} >
                     <Text style={[styles.taskText , {color:'white' , fontSize: 17 , marginVertical: 'auto'}]}>{item.title}</Text>
@@ -20,14 +32,11 @@ export default function TaskItem({item , pressEvent}) {
                         <Text style={[styles.taskText , { fontWeight: 'bold',  color:'gray' , fontSize: 14 , marginVertical: 'auto'}]}>{format(new Date(item.date), 'd MMM')}</Text>
                     </View>
                 </View >
-
-                <TouchableOpacity onPress={() => console.log('hello world')} style={{ marginVertical: 'auto' }}>
-                    <CheckButton />
-                </TouchableOpacity>
-
-            </View>
+            </TouchableOpacity>
+            
+            <CheckButton pressEvent={toggleStatus} taskItem={task} />
         
-        </TouchableOpacity>
+        </View>
     )
 }
 
@@ -42,7 +51,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#1F1F1F',
         borderLeftWidth: 15,
         borderLeftColor: '#8875FF',
-        elevation: 2
+        elevation: 2,
+        flexDirection : 'row' ,
+        justifyContent: 'space-between' 
     },
 
 })

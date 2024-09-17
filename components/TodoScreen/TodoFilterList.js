@@ -10,7 +10,6 @@ export default function TodoFilterList({task , list}) {
     const setSelectedItemForModal = (item)=> {
         setModalVisible(true)
         setSelectedItem(item)
-        console.log(item)
     }
 
     const closeModal = () => {
@@ -19,7 +18,7 @@ export default function TodoFilterList({task , list}) {
     }
 
     useEffect(() => {
-        console.log(selectedItem)
+        // console.log(selectedItem)
     }, [selectedItem])
 
     return(

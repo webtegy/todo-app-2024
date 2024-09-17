@@ -19,14 +19,8 @@ export default function CreateNewTaskModal() {
         description : '',
         category: '',
         priority: '',
-        date: null
+        date: new Date()
     })
-
-    // const [date , getDate] = useState(null);
-    
-    // useEffect(() => {
-    //     selectDate(date)
-    // }, [date])
 
     useEffect(() => {
         console.log('state date : ' , state.tasks)
@@ -54,7 +48,7 @@ export default function CreateNewTaskModal() {
             description : '',
             category: '',
             priority: '',
-            date: null
+            date: new Date()
         })
     }
 
