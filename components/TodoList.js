@@ -1,189 +1,182 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet, DatePickerAndroid } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from 'react';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, FlatList, Alert } from 'react-native';
 import TodoItem from './TodoItem';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f2f2f2',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 15,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  textInput: {
-    flex: 1,
-    fontSize: 16,
-    padding: 10,
-    color: '#333',
-  },
-  priorityButton: {
-    marginLeft: 10,
-    backgroundColor: '#ff9800',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-  },
-  priorityButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  addButton: {
-    marginLeft: 10,
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  dateButton: {
-    marginLeft: 10,
-    backgroundColor: '#2196F3',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-  },
-  dateButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  categoryInput: {
-    flex: 1,
-    fontSize: 16,
-    padding: 10,
-    color: '#333',
-    marginLeft: 10,
-  },
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#f2f2f2',
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 15,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+       marginBottom:40,
+    },
+    textInput: {
+        flex: 1,
+        fontSize: 16,
+        padding: 10,
+        color: '#333',
+    },
+    addButton: {
+        marginLeft: 10,
+        backgroundColor: '#4CAF50',
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 8,
+
+    },
+    addButtonText: {
+        color: '#fff',
+        fontSize: 16,
+
+    },
+    filterButton: {
+        margin: 5,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 5,
+        minWidth: 120,
+        marginTop:40,
+    },
+    filterButtonText: {
+        fontSize: 14,
+        color: '#fff',
+        textAlign: 'center',
+    },
+    filterContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 10,
+    },
+    emptyMessage: {
+        textAlign: 'center',
+        marginVertical: 20,
+        color: '#666',
+    },
 });
 
 export default function TodoList() {
-  const [tasks, setTasks] = useState([]);
-  const [text, setText] = useState('');
-  const [priority, setPriority] = useState('Medium');
-  const [dueDate, setDueDate] = useState('');
-  const [category, setCategory] = useState('');
+    const [tasks, setTasks] = useState([
+        { id: 1, text: 'Doctor Appointment', completed: true, pinned: false, createdAt: new Date(), finishDate: '', finishTime: '' },
+        { id: 2, text: 'Meeting at School', completed: false, pinned: false, createdAt: new Date(), finishDate: '', finishTime: '' },
+    ]);
+    const [text, setText] = useState('');
+    const [filter, setFilter] = useState('all');
 
-  useEffect(() => {
-    async function loadTasks() {
-      try {
-        const storedTasks = await AsyncStorage.getItem('tasks');
-        if (storedTasks) {
-          setTasks(JSON.parse(storedTasks));
+    function addTask() {
+        if (text.trim() === '') {
+            Alert.alert('Invalid Task', 'Task text cannot be empty.');
+            return;
         }
-      } catch (error) {
-        console.error('Failed to load tasks', error);
-      }
+        if (tasks.some(task => task.text.toLowerCase() === text.trim().toLowerCase())) {
+            Alert.alert('Duplicate Task', 'This task already exists.');
+            return;
+        }
+        const now = new Date();
+        const newTask = { id: Date.now(), text: text.trim(), completed: false, pinned: false, createdAt: now, finishDate: '', finishTime: '' };
+        setTasks([...tasks, newTask]);
+        setText('');
     }
-    loadTasks();
-  }, []);
 
-  useEffect(() => {
-    async function saveTasks() {
-      try {
-        await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
-      } catch (error) {
-        console.error('Failed to save tasks', error);
-      }
+    function deleteTask(id) {
+        setTasks(tasks.filter(task => task.id !== id));
     }
-    if (tasks.length > 0) {
-      saveTasks();
+
+    function toggleCompleted(id) {
+        setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed, updatedAt: new Date() } : task)));
     }
-  }, [tasks]);
 
-  function addTask() {
-    if (!text.trim()) return;
-    const newTask = { id: Date.now(), text, completed: false, priority, dueDate, category };
-    setTasks([...tasks, newTask]);
-    setText('');
-    setPriority('Medium');
-    setDueDate('');
-    setCategory('');
-  }
-
-  function deleteTask(id) {
-    setTasks(tasks.filter(task => task.id !== id));
-  }
-
-  function toggleCompleted(id) {
-    setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)));
-  }
-
-  function cyclePriority() {
-    const nextPriority = priority === 'High' ? 'Medium' : priority === 'Medium' ? 'Low' : 'High';
-    setPriority(nextPriority);
-  }
-
-  async function pickDueDate() {
-    try {
-      const { action, year, month, day } = await DatePickerAndroid.open({
-        date: new Date(),
-      });
-      if (action !== DatePickerAndroid.dismissedAction) {
-        setDueDate(`${year}-${month + 1}-${day}`);
-      }
-    } catch ({ code, message }) {
-      console.warn('Cannot open date picker', message);
+    function renameTask(id, newText, finishDate, finishTime) {
+        if (newText.trim() === '') {
+            Alert.alert('Invalid Task', 'Task text cannot be empty.');
+            return;
+        }
+        setTasks(tasks.map(task => 
+            task.id === id ? { ...task, text: newText.trim(), finishDate, finishTime, updatedAt: new Date() } : task
+        ));
     }
-  }
 
-  const sortedTasks = tasks.sort((a, b) => {
-    const priorityOrder = { High: 1, Medium: 2, Low: 3 };
-    return priorityOrder[a.priority] - priorityOrder[b.priority];
-  });
+    function togglePin(id) {
+        setTasks(tasks.map(task => (task.id === id ? { ...task, pinned: !task.pinned, updatedAt: new Date() } : task)));
+    }
 
-  return (
-    <View style={styles.container}>
-      {sortedTasks.map(task => (
+    const filteredTasks = tasks.filter(task => {
+        if (filter === 'completed') return task.completed;
+        if (filter === 'notCompleted') return !task.completed;
+        return true; // 'all' filter
+    });
+
+    const sortedTasks = [...filteredTasks].sort((a, b) => b.pinned - a.pinned);
+
+    const renderItem = ({ item, index }) => (
         <TodoItem
-          key={task.id}
-          task={task}
-          deleteTask={deleteTask}
-          toggleCompleted={toggleCompleted}
+            itemNumber={index + 1}
+            task={item}
+            deleteTask={deleteTask}
+            toggleCompleted={toggleCompleted}
+            renameTask={renameTask}
+            togglePin={togglePin}
         />
-      ))}
+    );
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          value={text}
-          onChangeText={setText}
-          placeholder="New Task"
-          placeholderTextColor="#999"
-        />
-        <TouchableOpacity style={styles.priorityButton} onPress={cyclePriority}>
-          <Text style={styles.priorityButtonText}>{priority}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.dateButton} onPress={pickDueDate}>
-          <Text style={styles.dateButtonText}>{dueDate || 'Pick Due Date'}</Text>
-        </TouchableOpacity>
-        <TextInput
-          style={styles.categoryInput}
-          value={category}
-          onChangeText={setCategory}
-          placeholder="Category"
-          placeholderTextColor="#999"
-        />
-        <TouchableOpacity style={styles.addButton} onPress={addTask}>
-          <Text style={styles.addButtonText}>Add</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+    return (
+        <View style={styles.container}>
+            <View style={styles.filterContainer}>
+                <TouchableOpacity
+                    style={[styles.filterButton, { backgroundColor: filter === 'all' ? '#4CAF50' : '#ccc' }]}
+                    onPress={() => setFilter('all')}
+                >
+                    <Text style={styles.filterButtonText}>All</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.filterButton, { backgroundColor: filter === 'completed' ? '#4CAF50' : '#ccc' }]}
+                    onPress={() => setFilter('completed')}
+                >
+                    <Text style={styles.filterButtonText}>Completed</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.filterButton, { backgroundColor: filter === 'notCompleted' ? '#4CAF50' : '#ccc' }]}
+                    onPress={() => setFilter('notCompleted')}
+                >
+                    <Text style={styles.filterButtonText}>Not Completed</Text>
+                </TouchableOpacity>
+            </View>
+            <FlatList
+                data={sortedTasks}
+                renderItem={renderItem}
+                keyExtractor={item => item.id.toString()}
+                ListEmptyComponent={<Text style={styles.emptyMessage}>No tasks available</Text>}
+            />
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.textInput}
+                    value={text}
+                    onChangeText={setText}
+                    placeholder="New Task"
+                    placeholderTextColor="#999"
+                />
+                <TouchableOpacity
+                    style={[styles.addButton, { opacity: text.trim() === '' ? 0.5 : 1 }]}
+                    onPress={addTask}
+                    disabled={text.trim() === ''}
+                >
+                    <Text style={styles.addButtonText}>Add</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 }
