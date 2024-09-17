@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text,  TextInput, CheckBox, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, CheckBox, TouchableOpacity, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   todoItem: {
@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginVertical: 5,
+    backgroundColor: '#f9f9f9',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ddd',
@@ -18,13 +19,13 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-
   checkboxContainer: {
     marginRight: 10,
   },
   todoItemText: {
     flex: 1,
     fontSize: 16,
+    color: '#333',
   },
   completed: {
     textDecorationLine: 'line-through',
@@ -35,39 +36,29 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 5,
-    marginLeft: 10, //Mano
   },
   deleteButtonText: {
     color: '#fff',
     fontSize: 14,
   },
-  
- // Style for the priority dot
   priorityDot: {
     width: 12,
     height: 12,
     borderRadius: 6,
     marginRight: 10,
   },
-   
-   editButton: {
-    backgroundColor: "#FFD700",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 5,
+  dueDateText: {
+    fontSize: 12,
+    color: '#666',
   },
-    
-  input: {
-    flex: 1,
-    padding: 5,
-    fontSize: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+  categoryText: {
+    fontSize: 12,
+    color: '#666',
+    marginRight: 10,
   },
 });
 
-export default function TodoItem({ task, deleteTask, toggleCompleted, editingTaskId, setEditingTaskId, updateTask, textColor }) {
-  // Function to determine dot color based on priority
+export default function TodoItem({ task, deleteTask, toggleCompleted }) {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'High':
@@ -80,59 +71,25 @@ export default function TodoItem({ task, deleteTask, toggleCompleted, editingTas
         return '#ccc'; // Default grey
     }
   };
-  const [newText, setNewText] = useState(task.text); // Hold edited text
-  
+
   return (
-    <View style={[styles.todoItem, { backgroundColor: textColor === '#FFFFFF' ? '#333' : '#f9f9f9' }]}>
+    <View style={styles.todoItem}>
       <View style={styles.checkboxContainer}>
         <CheckBox
-          accessibilityLabel={`Toggle ${task.completed ? 'unchecked' : 'checked'} for ${task.text}`}
           value={task.completed}
           onValueChange={() => toggleCompleted(task.id)}
           tintColors={{ true: '#4CAF50', false: '#ccc' }} // Green when checked
         />
       </View>
-
-      {/* Add the priority dot here */}
       <View style={[styles.priorityDot, { backgroundColor: getPriorityColor(task.priority) }]} />
-       {editingTaskId === task.id ? (
-        // Show TextInput if editing
-        <TextInput
-          style={styles.input}
-          value={newText}
-          onChangeText={setNewText}
-          onSubmitEditing={() => updateTask(task.id, newText)}
-        />
-      ) : (
-      <Text
-        style={[styles.todoItemText, { color: textColor }, task.completed && styles.completed]}
-        accessibilityLabel={task.text}
-        accessibilityRole="text"
-      >
-
+      <Text style={[styles.todoItemText, task.completed && styles.completed]}>
         {task.text}
       </Text>
-      
-      
-      <TouchableOpacity
-        style={styles.editButton}
-        onPress={
-          () =>
-            editingTaskId === task.id
-              ? updateTask(task.id, newText) // Save edited text
-              : setEditingTaskId(task.id) // Enable edit mode
-        }
-      >
-      <Text style={styles.deleteButtonText}>
-          {editingTaskId === task.id ? "Save" : "Edit"}
-        </Text>
-      </TouchableOpacity>
-      
+      {task.dueDate && <Text style={styles.dueDateText}>{task.dueDate}</Text>}
+      {task.category && <Text style={styles.categoryText}>{task.category}</Text>}
       <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => deleteTask(task.id)}
-        accessibilityLabel={`Delete ${task.text}`}
-        accessibilityHint="Remove the task from the list"
       >
         <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
