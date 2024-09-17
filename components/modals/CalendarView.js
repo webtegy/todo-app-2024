@@ -19,7 +19,6 @@ function DateItem({ date, selected, onPress }) {
   );
 }
 
-<<<<<<< HEAD
 export default function CalendarPicker({ setDate , gotDate}) {
   
   const [selectedDate, setSelectedDate] = useState(gotDate || new Date());
@@ -27,12 +26,6 @@ export default function CalendarPicker({ setDate , gotDate}) {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(gotDate || new Date(), { weekStartsOn: 1 })
   );
-=======
-export default function CalendarPicker({ setDate}) {
-  const today = new Date();
-  const [selectedDate, setSelectedDate] = useState(today);
-  const [currentWeekStart, setCurrentWeekStart] = useState(today);
->>>>>>> master
   
   const handlePrevWeek = () => {
     setCurrentWeekStart(subWeeks(currentWeekStart, 1));

@@ -19,7 +19,8 @@ export default function TodoScreen() {
     const [selectedDate , setSelectedDate] = useState();
 
     useEffect(() => {
-        // 
+        const res = TodoService.getTodosByDate(selectedDate , state.tasks);
+        setTodoList(res)
     } , [state.tasks])
 
     useEffect(() => {

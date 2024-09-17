@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState , useContext} from 'react';
 import {  View,  StyleSheet , Text, TouchableWithoutFeedback  } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CheckButton from './CheckButton';
@@ -7,17 +7,17 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import TodoService from '../services/TodoService';
 import { TodoContext  } from '../store/store';
 
+
 export default function TaskItem({item , pressEvent}) {
     const { state , dispatch } = useContext(TodoContext);
     const [task , setTask] = useState(item)
 
+
     const toggleStatus = async() => {
         setTask({...task ,  completed : !task.completed })
         const updatedTasks = state.tasks.map(t => t.id === task.id ? task : t);
-        // console.log("updated ones are -> " , updatedTasks)
-        const res = await TodoService.updateTask(task , updatedTasks)
-        console.log("output => " , task )
-        dispatch({ type: 'LOAD_TASKS', payload: res.message });
+        await TodoService.updateTask(task , updatedTasks)
+        dispatch({ type: 'LOAD_TASKS', payload: updatedTasks });
     }
 
     return (
@@ -29,12 +29,12 @@ export default function TaskItem({item , pressEvent}) {
                     <Text style={[styles.taskText , {color:'white' , fontSize: 17 , marginVertical: 'auto'}]}>{item.title}</Text>
                     <View style={{ display : 'flex', marginTop : 5, flexDirection : 'row'}}>
                         <AntDesign name="calendar" size={18} color="gray" style={{ marginVertical: 'auto', marginRight : 5 }} />
-                        <Text style={[styles.taskText , { fontWeight: 'bold',  color:'gray' , fontSize: 14 , marginVertical: 'auto'}]}>{listDate.toLocaleDateString()}</Text>
+                        <Text style={[styles.taskText , { fontWeight: 'bold',  color:'gray' , fontSize: 14 , marginVertical: 'auto'}]}>{format(item.date , "dd MMM")}</Text>
                     </View>
                 </View >
             </TouchableOpacity>
             
-            <CheckButton pressEvent={toggleStatus} taskItem={task} />
+            <CheckButton pressEvent={toggleStatus} taskItem={state.tasks.find(gotTask => gotTask.id === task.id)} />
         
         </View>
     )

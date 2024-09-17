@@ -17,6 +17,9 @@ const reducer = (state, action) => {
             return { ...state, tasks: state.tasks.filter(task => task.id !== action.payload) };
         case 'UPDATE_TASK':
             return { ...state, tasks: state.tasks.map(task => (task.id == action.payload.id ? action.payload.task : task)) };
+        case 'GET_TASK_BY_ID':
+            const task = state.tasks.find(task => task.id === action.payload);
+            return { ...state, selectedTask: task }; 
         default:
             return state;
     }

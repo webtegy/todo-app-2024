@@ -10,7 +10,7 @@ import SelectableButton from '../SelectableButton';
 
 
 
-export default function CreateNewTaskModal({update}) {
+export default function CreateNewTaskModal() {
     const {state, dispatch} = useContext(TodoContext);
     const [modalVisible, setModalVisible] = useState(false);
    
@@ -32,7 +32,6 @@ export default function CreateNewTaskModal({update}) {
     
     const closeModal = () => {
         setModalVisible(false);
-        update(true);
     };
 
     const handleCreateTask = async() => {
@@ -62,12 +61,8 @@ export default function CreateNewTaskModal({update}) {
     }
 
     const selectDate = (newDate) => {
-<<<<<<< HEAD
         const correctedDate = new Date(newDate)
         setFormData({...formData, date: correctedDate})
-=======
-        setFormData({...formData, date: new Date(newDate)});
->>>>>>> master
     }
 
 
