@@ -6,17 +6,45 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import TodayTask from '../../components/dashboard/TodayTask';
 import CreateNewTaskModal from '../../components/modals/CreateNewTaskModal';
 import EditTaskModal from '../../components/modals/EditTaskModal';
+import { useEffect, useState } from 'react';
+import AsyncStorageService from '../../services/AsyncStorageService';
 
 export default function DashboardScreen() {
+    const [isAdded,setIsAdded]=useState(false);
+    const [isLoading,setIsLoading] = useState(false);
+    const [loadedTasks,setLoadedTasks]=useState([]);
+    const loadTaskData = async () => {
+        try {
+            const tasks = await AsyncStorageService.loadTasks(); // Await for loading tasks
+            setLoadedTasks(tasks);
+            if(tasks){
+                setIsLoading(true);
+                setIsAdded(false);
+            }
+            // You can now use the loaded tasks
+        } catch (error) {
+            console.error('Error loading tasks:', error); // Handle any errors
+        }
+    };
+    useEffect(()=>{
+        if(isAdded){
+            loadTaskData();
+            setIsAdded(false);
+        }
+    })
+    const today = new Date();
+    const print=()=>{
+        console.log(today);
+    }
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} onLayout={loadTaskData}>
 
             <View style={styles.header}>
                 <View>
                     <Text style={styles.headerText}>You have got 5 tasks</Text>
                     <Text style={styles.headerText}>today to complete 🖍️</Text>
                 </View>
-                <CreateNewTaskModal />
+                <CreateNewTaskModal update={setIsAdded}/>
                 {/* <EditTaskModal /> */}
             </View>
 
@@ -43,15 +71,13 @@ export default function DashboardScreen() {
                     </TouchableOpacity>
                 </View>
 
-                <ProgressTracker taskList={[]} />
+                {isLoading && <ProgressTracker taskList={[]} />}
 
-                {/* <TodayTask task={"Today's Task"} />
-
-                <TodayTask task={"Tommorrow Task"} /> */}
+                {isLoading && <TodayTask task={1} list={loadedTasks}/>}
+                {isLoading && <TodayTask task={2} list={loadedTasks}/>}
+                {isLoading && <TodayTask task={3} list={loadedTasks}/>}
 
             </ScrollView>
-
-
         </SafeAreaView>
     )
 }
