@@ -1,7 +1,6 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import TodoItem from './TodoItem';
 
 const getTimeBasedBackgroundColor = (highContrast) => {
@@ -26,18 +25,16 @@ const getTimeBasedBackgroundColor = (highContrast) => {
   }
 };
 
-
-
-  // Function to Add Task
 export default function TodoList() {
   const [tasks, setTasks] = useState([]);
   const [text, setText] = useState('');
-    const [highContrast, setHighContrast] = useState(false);
-  // Get time-based background color
-  const backgroundColor = useMemo(() => getTimeBasedBackgroundColor(highContrast), [highContrast]);
+  const [highContrast, setHighContrast] = useState(false);
   const [priority, setPriority] = useState('Medium');
+  const [filter, setFilter] = useState('All');
 
-  // Load tasks from AsyncStorage when the component mounts
+  const backgroundColor = useMemo(() => getTimeBasedBackgroundColor(highContrast), [highContrast]);
+  const textColor = highContrast ? '#FFFFFF' : '#333333';
+
   useEffect(() => {
     async function loadTasks() {
       try {
@@ -52,7 +49,6 @@ export default function TodoList() {
     loadTasks();
   }, []);
 
-  // Save tasks to AsyncStorage whenever tasks state changes
   useEffect(() => {
     async function saveTasks() {
       try {
@@ -74,93 +70,99 @@ export default function TodoList() {
     setPriority('Medium');
   }
 
-
-  // Function to delete task
   function deleteTask(id) {
     setTasks(tasks.filter(task => task.id !== id));
   }
 
-
-  // Function to toggle task completion
   function toggleCompleted(id) {
     setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)));
   }
 
-
-   // Function to cycle through priorities
   function cyclePriority() {
     const nextPriority = priority === 'High' ? 'Medium' : priority === 'Medium' ? 'Low' : 'High';
     setPriority(nextPriority);
   }
-  
-  
-  // Sort tasks by priority ("High" > "Medium" > "Low")
-  const sortedTasks = tasks.sort((a, b) => {
+
+  function editTask(id, newText, newPriority, endDate) {
+    setTasks(tasks.map(task =>
+      task.id === id
+        ? { ...task, text: newText, priority: newPriority, endDate }
+        : task
+    ));
+  }
+
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'Completed') return task.completed;
+    if (filter === 'Uncompleted') return !task.completed;
+    return true;
+  });
+
+  const sortedTasks = filteredTasks.sort((a, b) => {
     const priorityOrder = { High: 1, Medium: 2, Low: 3 };
     return priorityOrder[a.priority] - priorityOrder[b.priority];
   });
-  
-  // Set text color based on high contrast mode
-  const textColor = highContrast ? '#FFFFFF' : '#333333'; // White for dark theme, dark gray for light theme
 
-  
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      {/* Header Row with Title and Toggle */}
       <View style={styles.headerContainer}>
-        <Text
-          style={[styles.accessibilityLabel, { color: textColor }]}
-          accessibilityRole="header"
-          accessibilityLabel="To-Do List App"
-        >
+        <Text style={[styles.accessibilityLabel, { color: textColor }]}>
           To-Do List App
         </Text>
         <View style={styles.switchContainer}>
-          <Text
-            style={[styles.darkThemeLabel, { color: textColor }]}
-            accessibilityLabel="Dark theme toggle"
-          >
+          <Text style={[styles.darkThemeLabel, { color: textColor }]}>
             Dark theme
           </Text>
           <Switch
-            accessibilityLabel="Toggle high contrast mode"
-            accessibilityHint="Switch between dark and light theme"
             value={highContrast}
             onValueChange={setHighContrast}
           />
         </View>
       </View>
 
-      {/* Task List */}
-     {sortedTasks.map(task => (
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === 'All' && styles.selectedFilter]}
+          onPress={() => setFilter('All')}
+        >
+          <Text style={styles.filterButtonText}>All</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === 'Completed' && styles.selectedFilter]}
+          onPress={() => setFilter('Completed')}
+        >
+          <Text style={styles.filterButtonText}>Completed</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === 'Uncompleted' && styles.selectedFilter]}
+          onPress={() => setFilter('Uncompleted')}
+        >
+          <Text style={styles.filterButtonText}>Uncompleted</Text>
+        </TouchableOpacity>
+      </View>
+
+      {sortedTasks.map(task => (
         <TodoItem
           key={task.id}
           task={task}
           deleteTask={deleteTask}
           toggleCompleted={toggleCompleted}
-
-          textColor={textColor} // Pass the text color to the TodoItem component
+          editTask={editTask}
+          textColor={textColor}
         />
       ))}
 
-      {/* Input Field for New Task */}
       <View style={styles.inputContainer}>
         <TextInput
-          accessibilityLabel="Task input field"
-          accessibilityHint="Enter a new task here"
-          style={[styles.textInput, { color: textColor }]} // Text color for input field
+          style={[styles.textInput, { color: textColor }]}
           value={text}
           onChangeText={setText}
           placeholder="New Task"
-          placeholderTextColor={highContrast ? '#AAAAAA' : '#999'} // Adjust placeholder color for dark theme
+          placeholderTextColor={highContrast ? '#AAAAAA' : '#999'}
         />
         <TouchableOpacity style={styles.priorityButton} onPress={cyclePriority}>
           <Text style={styles.priorityButtonText}>{priority}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel="Add task"
-          accessibilityHint="Add the new task to the list"
           style={styles.addButton}
           onPress={addTask}
         >
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center', // Aligns title and toggle on the same line
+    alignItems: 'center',
     marginBottom: 20,
   },
   inputContainer: {
@@ -203,7 +205,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 10,
   },
-  
   priorityButton: {
     backgroundColor: '#ff9800',
     padding: 10,
@@ -211,8 +212,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   priorityButtonText: {
-    color: '#fff',
-  },
+    color: '#fff',
+  },
   addButton: {
     marginLeft: 10,
     backgroundColor: '#4CAF50',
@@ -229,10 +230,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   darkThemeLabel: {
-    marginRight: 10, // Adds space between the label and the switch
+    marginRight: 10,
   },
   accessibilityLabel: {
     fontSize: 20,
   },
+  filterContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  filterButton: {
+    backgroundColor: '#e0e0e0',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  selectedFilter: {
+    backgroundColor: '#4CAF50',
+  },
+  filterButtonText: {
+    color: '#333',
+  },
 });
-
