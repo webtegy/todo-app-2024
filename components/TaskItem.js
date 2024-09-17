@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import React , {useState , useContext} from 'react';
-=======
 import React,{useState} from 'react';
->>>>>>> master
 import {  View,  StyleSheet , Text, TouchableWithoutFeedback  } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CheckButton from './CheckButton';
@@ -12,7 +8,6 @@ import TodoService from '../services/TodoService';
 import { TodoContext  } from '../store/store';
 
 export default function TaskItem({item , pressEvent}) {
-<<<<<<< HEAD
     const { state , dispatch } = useContext(TodoContext);
     const [task , setTask] = useState(item)
 
@@ -25,9 +20,6 @@ export default function TaskItem({item , pressEvent}) {
         dispatch({ type: 'LOAD_TASKS', payload: res.message });
     }
 
-=======
-    let listDate = new Date(item.date);
->>>>>>> master
     return (
         <View style={styles.container}>
             
