@@ -3,7 +3,6 @@ import { View, TextInput, Text, TouchableOpacity, StyleSheet, DatePickerAndroid 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TodoItem from './TodoItem';
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -21,7 +20,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     shadowColor: '#000',
-
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -81,7 +79,6 @@ export default function TodoList() {
   const [priority, setPriority] = useState('Medium');
   const [dueDate, setDueDate] = useState('');
   const [category, setCategory] = useState('');
-  const [editingTaskId, setEditingTaskId] = useState(null); // Track the task being edited
 
   useEffect(() => {
     async function loadTasks() {
@@ -110,7 +107,6 @@ export default function TodoList() {
     }
   }, [tasks]);
 
-//Function to add a task
   function addTask() {
     if (!text.trim()) return;
     const newTask = { id: Date.now(), text, completed: false, priority, dueDate, category };
@@ -121,28 +117,12 @@ export default function TodoList() {
     setCategory('');
   }
 
-// Function to delete a task
   function deleteTask(id) {
-    setTasks(tasks.filter((task) => task.id !== id));
+    setTasks(tasks.filter(task => task.id !== id));
   }
 
-
-  // Function to toggle task completion
   function toggleCompleted(id) {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
-  }
-
-
-  // Function to update an edited task
-  function updateTask(id, newText) {
-    setTasks(
-      tasks.map((task) => (task.id === id ? { ...task, text: newText } : task))
-    );
-    setEditingTaskId(null); // Exit editing mode
+    setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)));
   }
 
   function cyclePriority() {
@@ -171,15 +151,11 @@ export default function TodoList() {
   return (
     <View style={styles.container}>
       {sortedTasks.map(task => (
-
         <TodoItem
           key={task.id}
           task={task}
           deleteTask={deleteTask}
           toggleCompleted={toggleCompleted}
-          editingTaskId={editingTaskId}
-          setEditingTaskId={setEditingTaskId}
-          updateTask={updateTask}
         />
       ))}
 
@@ -191,7 +167,6 @@ export default function TodoList() {
           placeholder="New Task"
           placeholderTextColor="#999"
         />
-
         <TouchableOpacity style={styles.priorityButton} onPress={cyclePriority}>
           <Text style={styles.priorityButtonText}>{priority}</Text>
         </TouchableOpacity>
@@ -205,7 +180,6 @@ export default function TodoList() {
           placeholder="Category"
           placeholderTextColor="#999"
         />
-
         <TouchableOpacity style={styles.addButton} onPress={addTask}>
           <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
