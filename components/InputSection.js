@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
   },
-  cancelButton: {
+  cancleButton: {
     marginTop: 10,
     backgroundColor: "#ff362b",
     paddingVertical: 12,
