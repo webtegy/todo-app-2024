@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   priorityContainer: {
     flexDirection: "column",
-    // alignItems: "center",
+    alignItems: "left",
     marginLeft: -50,
     marginTop: 40,
   },
@@ -75,10 +75,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: 25,
-    marginRight: -4,
+    marginRight: 0,
   },
   orderButtonsContainer: {
-    marginRight: -15,
     flexDirection: "column",
     alignItems: "center",
   },
