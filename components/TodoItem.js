@@ -15,7 +15,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import Checkbox from "expo-checkbox";
 import { format } from "date-fns";
 import { MaterialIcons } from "@expo/vector-icons";
-
 const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
