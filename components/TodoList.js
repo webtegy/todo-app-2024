@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, FlatList,Switch } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TodoItem from './TodoItem';
 
@@ -34,6 +34,8 @@ export default function TodoList() {
 
   const backgroundColor = useMemo(() => getTimeBasedBackgroundColor(highContrast), [highContrast]);
   const textColor = highContrast ? '#FFFFFF' : '#333333';
+
+  
 
   useEffect(() => {
     async function loadTasks() {
@@ -90,6 +92,7 @@ export default function TodoList() {
         : task
     ));
   }
+  
 
   const filteredTasks = tasks.filter(task => {
     if (filter === 'Completed') return task.completed;
@@ -97,11 +100,25 @@ export default function TodoList() {
     return true;
   });
 
+  const addSubtask = (taskId, subtask) => {
+    console.log('Before update:', tasks);
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.map((task) =>
+        task.id === taskId
+          ? { ...task, subtasks: [...(task.subtasks || []), subtask] }
+          : task
+      );
+      console.log('After update:', updatedTasks);
+      return updatedTasks;
+    });
+  };
+  
+
   const sortedTasks = filteredTasks.sort((a, b) => {
     const priorityOrder = { High: 1, Medium: 2, Low: 3 };
     return priorityOrder[a.priority] - priorityOrder[b.priority];
   });
-
+  
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.headerContainer}>
@@ -140,16 +157,20 @@ export default function TodoList() {
         </TouchableOpacity>
       </View>
 
-      {sortedTasks.map(task => (
-        <TodoItem
-          key={task.id}
-          task={task}
-          deleteTask={deleteTask}
-          toggleCompleted={toggleCompleted}
-          editTask={editTask}
-          textColor={textColor}
-        />
-      ))}
+      <FlatList
+        data={sortedTasks}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TodoItem
+            task={item}
+            deleteTask={deleteTask}
+            toggleCompleted={toggleCompleted}
+            editTask={editTask}
+            textColor={textColor}
+            addSubtask={addSubtask} // Pass addSubtask function to TodoItem
+          />
+        )}
+      />
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -169,6 +190,7 @@ export default function TodoList() {
           <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
       </View>
+      
     </View>
   );
 }
@@ -251,5 +273,16 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     color: '#333',
+  },
+  subtaskButton: {
+    backgroundColor: '#FFA500',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  subtaskButtonText: {
+    color: '#fff',
+    fontSize: 14,
   },
 });

@@ -1,14 +1,30 @@
 import React, { useState } from 'react';
-import { View, Text, CheckBox, TouchableOpacity, StyleSheet, TextInput, Modal, DatePickerAndroid } from 'react-native';
+import { View, Text, CheckBox, TouchableOpacity, StyleSheet, TextInput, Modal } from 'react-native';
 
 const styles = StyleSheet.create({
   todoItem: {
     flexDirection: 'row',
-    alignItems: 'center',
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,
     elevation: 3,
+    backgroundColor: '#f9f9f9',
+  },
+  mainContent: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  subtaskButton: {
+    backgroundColor: '#FFA500',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginRight: 10,
+    height:30,
+  },
+  subtaskButtonText: {
+    color: '#fff',
+    fontSize: 14,
   },
   checkboxContainer: {
     marginRight: 10,
@@ -20,7 +36,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   todoItemText: {
-    flex: 1,
     fontSize: 16,
   },
   completed: {
@@ -33,6 +48,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
     marginRight: 10,
+    height:30,
   },
   editButtonText: {
     color: '#fff',
@@ -43,6 +59,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 5,
+    height:30,
   },
   deleteButtonText: {
     color: '#fff',
@@ -88,35 +105,39 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
-  moreButton: {
-    backgroundColor: '#1E90FF',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    marginRight: 10,
-  },
-  moreButtonText: {
-    color: '#fff',
-    fontSize: 14,
-  },
-  datePickerButton: {
-    backgroundColor: '#4CAF50',
+  cancelButton: {
+    backgroundColor: '#FF6347',
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 5,
     marginTop: 10,
   },
-  datePickerButtonText: {
+  cancelButtonText: {
     color: '#fff',
+    fontSize: 14,
+  },
+  subtaskContainer: {
+    marginLeft: 20,
+    flexDirection: 'column',
+    
+  },
+  subtaskText: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
-export default function TodoItem({ task, deleteTask, toggleCompleted, textColor, editTask }) {
+export default function TodoItem({ task, deleteTask, toggleCompleted, textColor, editTask, addSubtask }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [moreModalVisible, setMoreModalVisible] = useState(false);
   const [newText, setNewText] = useState(task.text);
   const [newPriority, setNewPriority] = useState(task.priority);
   const [endDate, setEndDate] = useState(task.endDate || '');
+  const [subtaskText, setSubtaskText] = useState('');
+  const [showSubtaskInput, setShowSubtaskInput] = useState(false);
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -155,39 +176,78 @@ export default function TodoItem({ task, deleteTask, toggleCompleted, textColor,
     }
   };
 
+  const handleAddSubtask = () => {
+    if (subtaskText.trim()) {
+      addSubtask(task.id, { text: subtaskText, completed: false });
+      setSubtaskText('');
+      setShowSubtaskInput(false);
+    }
+  };
+
   return (
     <View style={[styles.todoItem, { backgroundColor: textColor === '#FFFFFF' ? '#333' : '#f9f9f9' }]}>
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={task.completed}
-          onValueChange={() => toggleCompleted(task.id)}
-          tintColors={{ true: '#4CAF50', false: '#ccc' }}
-        />
+      <View style={styles.mainContent}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={styles.checkboxContainer}>
+            <CheckBox
+              value={task.completed}
+              onValueChange={() => toggleCompleted(task.id)}
+              tintColors={{ true: '#4CAF50', false: '#ccc' }}
+            />
+          </View>
+          <View style={[styles.priorityDot, { backgroundColor: getPriorityColor(task.priority) }]} />
+          <Text style={[styles.todoItemText, { color: textColor }, task.completed && styles.completed]}>
+            {task.text}
+          </Text>
+        </View>
+        <View style={styles.subtaskContainer}>
+          {task.subtasks && task.subtasks.map((subtask, index) => (
+            <Text key={index} style={styles.subtaskText}>
+              • {subtask.text}
+            </Text>
+          ))}
+        </View>
       </View>
-      <View style={[styles.priorityDot, { backgroundColor: getPriorityColor(task.priority) }]} />
-      <Text
-        style={[styles.todoItemText, { color: textColor }, task.completed && styles.completed]}
-      >
-        {task.text}
-      </Text>
-      <TouchableOpacity
-        style={styles.editButton}
-        onPress={() => setModalVisible(true)}
-      >
+      <TouchableOpacity style={styles.subtaskButton} onPress={() => setShowSubtaskInput(true)}>
+        <Text style={styles.subtaskButtonText}>Add Subtask</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.editButton} onPress={() => setModalVisible(true)}>
         <Text style={styles.editButtonText}>Edit</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.moreButton}
-        onPress={() => setMoreModalVisible(true)}
-      >
+      <TouchableOpacity style={styles.moreButton} onPress={() => setMoreModalVisible(true)}>
         <Text style={styles.moreButtonText}>More</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => deleteTask(task.id)}
-      >
+      <TouchableOpacity style={styles.deleteButton} onPress={() => deleteTask(task.id)}>
         <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
+
+      {/* Modal for adding subtask */}
+      {showSubtaskInput && (
+        <Modal
+          visible={showSubtaskInput}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setShowSubtaskInput(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TextInput
+                style={[styles.textInput, { color: textColor }]}
+                value={subtaskText}
+                onChangeText={setSubtaskText}
+                placeholder="Enter subtask"
+                placeholderTextColor="#999"
+              />
+              <TouchableOpacity style={styles.modalButton} onPress={handleAddSubtask}>
+                <Text style={styles.modalButtonText}>Add Subtask</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setShowSubtaskInput(false)}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
 
       {/* Modal for editing task */}
       <Modal
@@ -212,44 +272,11 @@ export default function TodoItem({ task, deleteTask, toggleCompleted, textColor,
               placeholder="Priority (High/Medium/Low)"
               placeholderTextColor="#999"
             />
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleSaveEdit}
-            >
-              <Text style={styles.saveButtonText}>Save</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={handleSaveEdit}>
+              <Text style={styles.modalButtonText}>Save</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setModalVisible(false)}
-            >
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
               <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Modal for more info */}
-      <Modal
-        visible={moreModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setMoreModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={[styles.text, { color: textColor }]}>Created: {task.creationDate}</Text>
-            <Text style={[styles.text, { color: textColor }]}>End Date: {task.endDate || 'N/A'}</Text>
-            <TouchableOpacity
-              style={styles.dateButton}
-              onPress={showDatePicker}
-            >
-              <Text style={styles.dateButtonText}>Set End Date</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setMoreModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
