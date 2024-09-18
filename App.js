@@ -7,6 +7,7 @@ import WelcomeScreen from './components/WelcomeScreen'; // New WelcomeScreen com
 const Stack = createStackNavigator();
 
 export default function App() {
+  
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Welcome">

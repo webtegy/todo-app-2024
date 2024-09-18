@@ -31,12 +31,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
   },
+  
 });
 
 export default function WelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {/* Add the logo here */}
+      
       <Image
         source={require('../assets/logo.png')}  // Replace with the correct path to your logo
         style={styles.logo}
