@@ -24,17 +24,17 @@ const getTimeBasedBackgroundColor = (highContrast) => {
   const hour = new Date().getHours();
 
   if (hour >= 5 && hour < 8) {
-    return "#FFF4E0"; // Soft sunrise color #FFF4E0
+    return "#FFF4E0"; 
   } else if (hour >= 8 && hour < 11) {
-    return "#8badcc"; // Soft blue morning sky
+    return "#8badcc"; 
   } else if (hour >= 11 && hour < 15) {
-    return "#9dbf9f"; // Light refreshing green
+    return "#9dbf9f"; 
   } else if (hour >= 15 && hour < 18) {
-    return "#e3cdaa"; // Warm afternoon glow ffe5b5
+    return "#e3cdaa"; 
   } else if (hour >= 18 && hour < 21) {
-    return "#8891db"; // Calming twilight blue
+    return "#8891db"; 
   } else {
-    return "#9e7dc9"; // Cool, restful night tones ECEFF1 '#302045'
+    return "#9e7dc9"; 
   }
 };
 
