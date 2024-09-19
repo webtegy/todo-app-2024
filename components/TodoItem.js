@@ -150,6 +150,18 @@ const styles = StyleSheet.create({
     color: "#919294",
     textAlign: "left",
   },
+  actionButton: {
+  padding: 10,
+  borderRadius: 5,
+  alignItems:"center",
+  marginBottom: 5,
+  backgroundColor: "#b9b6ba",
+},
+actionButtonsContainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 10,
+},
 });
 
 export default function TodoItem({
@@ -195,6 +207,7 @@ export default function TodoItem({
   const handleSaveEdit = () => {
     editTask(task.id, newText, newPriority, endDate);
     setModalVisible(false);
+    //setShowMoreOptions(false);
   };
 
   const handleDateChange = (date) => {
@@ -216,6 +229,9 @@ export default function TodoItem({
         styles.todoItem,
         { backgroundColor: textColor === "#FFFFFF" ? "#333" : "#f9f9f9" },
       ]}
+      accessible={true} // Enable accessibility for the container
+      accessibilityLabel={`Task item. ${task.text}. Priority ${task.priority}.`}
+      accessibilityHint="Double tap to view more options"
     >
       <View style={styles.mainContent}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -232,7 +248,8 @@ export default function TodoItem({
             
               //tintcolor={{ true: '#4CAF50', false: '#ccc' }}
               style={{ marginRight: 10, size:5, }}
-              
+              accessibilityLabel={`Mark task ${task.text} as ${task.completed ? 'incomplete' : 'completed'}`}
+              accessibilityRole="checkbox"
             />
           
           </View>
@@ -262,6 +279,8 @@ export default function TodoItem({
                    checkedCheckBoxColor='#5A0079'  // Color when checked
       uncheckedCheckBoxColor='#ccc' 
                   style={{ marginRight: 10 }}
+                  accessibilityLabel={`Mark subtask ${subtask.text} as ${subtask.completed ? 'incomplete' : 'completed'}`}
+                  accessibilityRole="checkbox"
                 />
                 
                 <Text
@@ -291,6 +310,8 @@ export default function TodoItem({
       <TouchableOpacity
         style={styles.moreButton}
         onPress={() => setShowMoreOptions(true)}
+        accessibilityLabel="More options for task"
+        accessibilityRole="button"
       >
         <Icon name="ellipsis-vertical" size={20} color="#000" />
       </TouchableOpacity>
@@ -339,26 +360,33 @@ export default function TodoItem({
           animationType="slide"
           onRequestClose={() => setShowMoreOptions(false)}
         >
-          <View style={styles.modalContainer}>
+          <View style={styles.buttonContainer}>
             <View style={styles.modalContent}>
+              
               <TouchableOpacity
-                style={styles.subtaskButton}
+                style={styles.actionButton}
                 onPress={() => setShowSubtaskInput(true)}
+                accessibilityLabel="Add subtask"
+                accessibilityRole="button"
               >
-                <Text>Addsubtask</Text>
+                <Icon name="add" size={20} color="#000" />
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.editButton}
+                style={styles.actionButton}
                 onPress={() => setModalVisible(true)}
+                accessibilityLabel="Edit task"
+                accessibilityRole="button"
               >
-                <Text>Edit</Text>
+                <Icon name="create-outline" size={20} color="#000" />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.deleteButton}
+                style={styles.actionButton}
                 onPress={() => deleteTask(task.id)}
+                accessibilityLabel="Delete task"
+                accessibilityRole="button"
               >
-                <Text>Delete</Text>
+                <Icon name="trash" size={20} color="#000" />
               </TouchableOpacity>
 
               <Text style={{ fontSize: 10, marginBottom: 10 }}>
