@@ -24,20 +24,31 @@ const getTimeBasedBackgroundColor = (highContrast) => {
   const hour = new Date().getHours();
 
   if (hour >= 5 && hour < 8) {
-    return "#FFF4E0"; 
+    return "#FFF4E0"; // Soft sunrise color #FFF4E0
   } else if (hour >= 8 && hour < 11) {
-    return "#8badcc"; 
+    return "#8badcc"; // Soft blue morning sky
   } else if (hour >= 11 && hour < 15) {
-    return "#9dbf9f"; 
+    return "#9dbf9f"; // Light refreshing green
   } else if (hour >= 15 && hour < 18) {
-    return "#e3cdaa"; 
+    return "#e3cdaa"; // Warm afternoon glow ffe5b5
   } else if (hour >= 18 && hour < 21) {
-    return "#8891db"; 
+    return "#8891db"; // Calming twilight blue
   } else {
-    return "#9e7dc9"; 
+    return "#9e7dc9"; // Cool, restful night tones ECEFF1 '#302045'
   }
 };
-
+const getPriorityColor = (priority) => {
+  switch (priority) {
+    case "High":
+      return "#d71d0f"; // Red for high priority
+    case "Medium":
+      return "#ff9800"; // Orange for medium priority
+    case "Low":
+      return "#4caf50"; // Green for low priority
+    default:
+      return "#ff9800"; // Default to medium priority color
+  }
+};
 export default function TodoList() {
   const [tasks, setTasks] = useState([]);
   const [text, setText] = useState("");
@@ -102,6 +113,9 @@ export default function TodoList() {
       )
     );
   }
+
+  
+
   const toggleSubtaskCompleted = (taskId, subtaskIndex) => {
     const updatedTasks = tasks.map((task) => {
       if (task.id === taskId) {
@@ -121,6 +135,7 @@ export default function TodoList() {
   function cyclePriority() {
     const nextPriority =
       priority === "High" ? "Medium" : priority === "Medium" ? "Low" : "High";
+      
     setPriority(nextPriority);
   }
 
@@ -227,9 +242,13 @@ export default function TodoList() {
           placeholder="New Task"
           placeholderTextColor={highContrast ? "#AAAAAA" : "#999"}
         />
-        <TouchableOpacity style={styles.priorityButton} onPress={cyclePriority}>
+        <TouchableOpacity
+          style={[styles.priorityButton, { backgroundColor: getPriorityColor(priority) }]}
+          onPress={cyclePriority}
+        >
           <Text style={styles.priorityButtonText}>{priority}</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.addButton} onPress={addTask}>
           <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
@@ -271,7 +290,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   priorityButton: {
-    backgroundColor: "#ff9800",
+    //backgroundColor: "#ff9800",
+    //backgroundColor: getPriorityColor(),
     padding: 10,
     borderRadius: 8,
     marginLeft: 10,
