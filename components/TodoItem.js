@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Dimensions } from "react-native";
+import CheckBox from 'react-native-check-box';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {
   View,
   Text,
-  CheckBox,
+ Button,
   TouchableOpacity,
   StyleSheet,
   TextInput,
@@ -14,6 +15,8 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 
 const styles = StyleSheet.create({
+  // New styles for checked checkbox
+  
   todoItem: {
     flexDirection: "row",
     padding: 8,
@@ -35,6 +38,7 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     marginRight: 0,
+   // backgroundColor: task.completed ? 'red' : '#ccc' ,
   },
   priorityDot: {
     width: 10,
@@ -163,7 +167,9 @@ export default function TodoItem({
   const [newPriority, setNewPriority] = useState(task.priority);
   const [showSubtaskInput, setShowSubtaskInput] = useState(false);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
-  const [endDate, setEndDate] = useState(task.endDate || ""); // End date as a string
+  const [endDate, setEndDate] = useState(task.endDate || ""); // End date 
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -191,10 +197,17 @@ export default function TodoItem({
     setModalVisible(false);
   };
 
-  const handleDateChange = (event) => {
-    const { value } = event.target;
-    setEndDate(value);
-    editTask(task.id, task.text, task.priority, value);
+  const handleDateChange = (date) => {
+    setEndDate(date);
+    editTask(task.id, task.text, task.priority, date);
+    setDatePickerVisibility(false);  // Hide date picker after setting the date
+  };
+   const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
   };
 
   return (
@@ -207,12 +220,21 @@ export default function TodoItem({
       <View style={styles.mainContent}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View style={styles.checkboxContainer}>
-            <input
-              type="checkbox"
-              checked={task.completed}
-              onChange={() => toggleCompleted(task.id)}
-              style={{ marginRight: 10 }}
+          
+            <CheckBox
+              //type="checkbox"
+              isChecked={task.completed}
+             onClick={() => toggleCompleted(task.id)}
+            
+      checkedCheckBoxColor='#5A0079'  // Color when checked
+      uncheckedCheckBoxColor='#ccc'  
+           
+            
+              //tintcolor={{ true: '#4CAF50', false: '#ccc' }}
+              style={{ marginRight: 10, size:5, }}
+              
             />
+          
           </View>
           <Text
             style={[
@@ -233,12 +255,15 @@ export default function TodoItem({
                 key={index}
                 style={{ flexDirection: "row", alignItems: "center" }}
               >
-                <input
+                <CheckBox
                   type="checkbox"
-                  checked={subtask.completed}
-                  onChange={() => toggleSubtaskCompleted(task.id, index)}
+                  isChecked={subtask.completed}
+                  onClick={() => toggleSubtaskCompleted(task.id, index)}
+                   checkedCheckBoxColor='#5A0079'  // Color when checked
+      uncheckedCheckBoxColor='#ccc' 
                   style={{ marginRight: 10 }}
                 />
+                
                 <Text
                   style={[
                     styles.subtaskText,
@@ -320,7 +345,7 @@ export default function TodoItem({
                 style={styles.subtaskButton}
                 onPress={() => setShowSubtaskInput(true)}
               >
-                <Text>Add subtask</Text>
+                <Text>Addsubtask</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.editButton}
@@ -342,10 +367,17 @@ export default function TodoItem({
               </Text>
 
               <Text style={{ fontSize: 10, marginBottom: 10 }}>
-                Set task end Date:{" "}
+                 task end Date:{" "}
                 {endDate ? new Date(endDate).toLocaleDateString() : "Not Set"}
               </Text>
-              <input
+              <Button title="Show Date Picker" onPress={showDatePicker} />
+             <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleDateChange}
+        onCancel={hideDatePicker}
+      />
+              <TextInput
                 type="datetime-local"
                 value={endDate}
                 onChange={handleDateChange}
