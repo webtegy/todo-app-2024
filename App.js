@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import TodoList from './components/TodoList'; // Your existing TodoList component
+import TodoList from './components/TodoList'; // Your existing TodoList 
+
 import WelcomeScreen from './components/WelcomeScreen'; // New WelcomeScreen component
 
 const Stack = createStackNavigator();

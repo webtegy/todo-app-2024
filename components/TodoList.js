@@ -8,6 +8,8 @@ import {
   FlatList,
   Switch,
 } from "react-native";
+import CheckBox from 'react-native-check-box';
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "./TodoItem";
 import Icon from "react-native-vector-icons/Ionicons";

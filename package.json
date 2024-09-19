@@ -1,6 +1,4 @@
 {
-  "name": "todo-app-2024",
-  "version": "1.0.0",
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -9,23 +7,24 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@dotlottie/react-player": "^1.6.19",
-    "@expo/metro-runtime": "~3.2.1",
-    "@react-native-async-storage/async-storage": "^2.0.0",
-    "@react-native-community/datetimepicker": "^8.2.0",
-    "@react-navigation/native": "^6.1.18",
-    "@react-navigation/stack": "^6.4.1",
-    "expo": "~51.0.24",
+    "expo": "~51.0.28",
     "expo-status-bar": "~1.12.1",
-    "lottie-react-native": "^7.0.0",
-    "lottie-web": "^5.12.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-native": "0.74.3",
+    "react-native": "0.74.5",
+    "lottie-web": "^5.12.2",
+    "@expo/metro-runtime": "~3.2.1",
+    "react-native-screens": "^3.34.0",
+    "@dotlottie/react-player": "^1.6.19",
+    "@react-navigation/stack": "^6.4.1",
+    "@react-navigation/native": "^6.1.18",
     "react-native-gesture-handler": "^2.19.0",
     "react-native-linear-gradient": "^2.8.3",
-    "react-native-screens": "^3.34.0",
-    "react-native-web": "~0.19.10"
+    "@react-native-community/datetimepicker": "^8.2.0",
+    "@react-native-async-storage/async-storage": "^2.0.0",
+    "@react-native-community/checkbox": "^0.5.17",
+    "lottie-react-native": "^7.0.0",
+    "react-native-check-box": "^2.1.7",
+    "react-native-modal-datetime-picker": "^18.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
