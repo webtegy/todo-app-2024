@@ -176,15 +176,22 @@ export default function TodoList() {
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.headerContainer}>
-        <Text style={[styles.accessibilityLabel, { color: textColor }]}>
+        <Text style={[styles.accessibilityLabel, { color: textColor }]}
+        accessibilityLabel="Greeting message"
+        >
           Hello
           <Icon name="hand-right" size={20} color="yellow" />
         </Text>
         <View style={styles.switchContainer}>
-          <Text style={[styles.darkThemeLabel, { color: textColor }]}>
+          <Text style={[styles.darkThemeLabel, { color: textColor }]}
+          accessibilityLabel="Dark theme toggle"
+          >
             Dark theme
           </Text>
-          <Switch value={highContrast} onValueChange={setHighContrast} />
+          <Switch value={highContrast} onValueChange={setHighContrast} 
+          accessibilityLabel="Switch between light and dark themes"
+          accessibilityRole="switch"
+          />
         </View>
       </View>
 
@@ -195,6 +202,9 @@ export default function TodoList() {
             filter === "All" && styles.selectedFilter,
           ]}
           onPress={() => setFilter("All")}
+          accessibilityLabel="Show all tasks"
+          accessibilityRole="button"
+          accessible={true}
         >
           <Text style={styles.filterButtonText}>All</Text>
         </TouchableOpacity>
@@ -204,6 +214,9 @@ export default function TodoList() {
             filter === "Completed" && styles.selectedFilter,
           ]}
           onPress={() => setFilter("Completed")}
+          accessibilityLabel="Show completed tasks"
+          accessibilityRole="button"
+          accessible={true}
         >
           <Text style={styles.filterButtonText}>Done</Text>
         </TouchableOpacity>
@@ -213,6 +226,9 @@ export default function TodoList() {
             filter === "Uncompleted" && styles.selectedFilter,
           ]}
           onPress={() => setFilter("Uncompleted")}
+          accessibilityLabel="Show uncompleted tasks"
+          accessibilityRole="button"
+          accessible={true}
         >
           <Text style={styles.filterButtonText}>Pending</Text>
         </TouchableOpacity>
@@ -230,6 +246,9 @@ export default function TodoList() {
             textColor={textColor}
             addSubtask={addSubtask} // Pass addSubtask function to TodoItem
             toggleSubtaskCompleted={toggleSubtaskCompleted} // Pass toggleSubtaskCompleted function
+            accessible={true}
+            accessibilityLabel={`Task ${item.text}, priority ${item.priority}, ${item.completed ? "completed" : "not completed"}`}
+      accessibilityRole="button"
           />
         )}
       />
@@ -241,15 +260,24 @@ export default function TodoList() {
           onChangeText={setText}
           placeholder="New Task"
           placeholderTextColor={highContrast ? "#AAAAAA" : "#999"}
+          accessibilityLabel="Input field to add a new task"
+          accessible={true}
         />
         <TouchableOpacity
           style={[styles.priorityButton, { backgroundColor: getPriorityColor(priority) }]}
           onPress={cyclePriority}
+          accessibilityLabel={`Set task priority, current priority is ${priority}`}
+          accessibilityRole="button"
+          accessible={true}
         >
           <Text style={styles.priorityButtonText}>{priority}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.addButton} onPress={addTask}>
+        <TouchableOpacity style={styles.addButton} onPress={addTask}
+          accessibilityLabel="Add new task"
+          accessibilityRole="button"
+          accessible={true}
+          >
           <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
       </View>
