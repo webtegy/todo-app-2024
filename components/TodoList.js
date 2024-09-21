@@ -248,7 +248,7 @@ export default function TodoList() {
             toggleSubtaskCompleted={toggleSubtaskCompleted} // Pass toggleSubtaskCompleted function
             accessible={true}
             accessibilityLabel={`Task ${item.text}, priority ${item.priority}, ${item.completed ? "completed" : "not completed"}`}
-      accessibilityRole="button"
+            accessibilityRole="button"
           />
         )}
       />
