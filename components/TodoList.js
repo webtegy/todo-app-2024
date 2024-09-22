@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "./TodoItem";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Dimensions } from "react-native";
+import LottieView from 'lottie-react-native';
 
 const { width, height } = Dimensions.get("window");
 const getTimeBasedBackgroundColor = (highContrast) => {
@@ -201,6 +202,18 @@ export default function TodoList() {
     return priorityOrder[a.priority] - priorityOrder[b.priority];
   });
 
+  const renderEmptyList = () => (
+    <View style={styles.emptyContainer}>
+      <LottieView
+        source={require('../assets/Animation - 1726643875412.json')} // Path to your Lottie animation file
+        autoPlay
+        loop
+        style={styles.lottieAnimation}
+      />
+      <Text style={styles.emptyText}>There are no tasks to show</Text>
+    </View>
+  );
+
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.headerContainer}>
@@ -278,7 +291,7 @@ export default function TodoList() {
             accessibilityLabel={`Task ${item.text}, priority ${item.priority}, ${item.completed ? "completed" : "not completed"}`}
       accessibilityRole="button"
           />
-        )}
+        )}ListEmptyComponent={renderEmptyList} 
       />
 
       <View style={styles.inputContainer}>
@@ -392,5 +405,20 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     color: "#fff",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  lottieAnimation: {
+    width: 400,
+    height: 400
+    ,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: "white",
+    marginTop: 10,
   },
 });

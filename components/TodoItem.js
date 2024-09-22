@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CheckBox from 'react-native-check-box';
+
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {
   View,
@@ -76,6 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+   // backgroundColor: "red",
   },
   modalContent: {
     width: "80%",
@@ -83,6 +85,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     elevation: 5,
+    shadowColor:'black'
   },
   textInput: {
     height: 40,
@@ -105,6 +108,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 10,
+  },
+  mbuttonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 150
+    ,
   },
   modalButton: {
     backgroundColor: "#5A0079",
@@ -360,7 +369,7 @@ export default function TodoItem({
           animationType="slide"
           onRequestClose={() => setShowMoreOptions(false)}
         >
-          <View style={styles.buttonContainer}>
+          <View style={styles.mbuttonContainer}>
             <View style={styles.modalContent}>
               
               <TouchableOpacity
