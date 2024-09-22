@@ -180,7 +180,7 @@ export default function TodoItem({
   const [showSubtaskInput, setShowSubtaskInput] = useState(false);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [endDate, setEndDate] = useState(task.endDate || ""); // End date 
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
 
   const getPriorityColor = (priority) => {
