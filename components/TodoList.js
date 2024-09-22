@@ -7,6 +7,7 @@ import {
   StyleSheet,
   FlatList,
   Switch,
+  Alert,
 } from "react-native";
 import CheckBox from 'react-native-check-box';
 
@@ -86,6 +87,33 @@ export default function TodoList() {
     if (tasks.length > 0) {
       saveTasks();
     }
+  }, [tasks]);
+
+  useEffect(() => {
+    const checkPendingTasks = () => {
+      const now = new Date();
+      const halfDay = new Date(now.setHours(12, 0, 0)); // 12:00 PM
+
+      if (now >= halfDay) {
+        const pendingTasks = tasks.filter(task => !task.completed);
+        const highPriorityCount = pendingTasks.filter(task => task.priority === "High").length;
+        const mediumPriorityCount = pendingTasks.filter(task => task.priority === "Medium").length;
+        const lowPriorityCount = pendingTasks.filter(task => task.priority === "Low").length;
+
+        if (pendingTasks.length > 0) {
+          Alert.alert(
+            "Reminder",
+            `Half of the day is over! You have ${pendingTasks.length} pending tasks. 
+            High: ${highPriorityCount}, Medium: ${mediumPriorityCount}, Low: ${lowPriorityCount}.`,
+            [{ text: "OK" }],
+            { cancelable: true }
+          );
+        }
+      }
+    };
+
+    const interval = setInterval(checkPendingTasks, 60000); // Check every minute for recording purpose. Value should be changed to 360000, so that it checks every hour and notifies.
+    return () => clearInterval(interval);
   }, [tasks]);
 
   function addTask() {
@@ -248,7 +276,7 @@ export default function TodoList() {
             toggleSubtaskCompleted={toggleSubtaskCompleted} // Pass toggleSubtaskCompleted function
             accessible={true}
             accessibilityLabel={`Task ${item.text}, priority ${item.priority}, ${item.completed ? "completed" : "not completed"}`}
-            accessibilityRole="button"
+      accessibilityRole="button"
           />
         )}
       />
