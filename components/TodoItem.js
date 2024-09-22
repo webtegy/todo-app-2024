@@ -405,7 +405,7 @@ export default function TodoItem({
               </Text>
 
               <Text style={{ fontSize: 10, marginBottom: 10 }}>
-                 task end Date:{" "}
+                 Task End Date:{" "}
                 {endDate ? new Date(endDate).toLocaleDateString() : "Not Set"}
               </Text>
               <Button title="Show Date Picker" onPress={showDatePicker} />
