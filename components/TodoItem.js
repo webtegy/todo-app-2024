@@ -217,6 +217,7 @@ export default function TodoItem({
     editTask(task.id, newText, newPriority, endDate);
     setModalVisible(false);
     //setShowMoreOptions(false);
+    Alert (" saved changes ");
   };
 
   const handleDateChange = (date) => {
