@@ -30,10 +30,27 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
   },
-  
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
 });
 
 export default function WelcomeScreen({ navigation }) {
+
+  const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) {
+    return "Good Morning!\nWelcome to the Todo App!";
+  } else if (hour < 15) {
+    return "Good Afternoon!\nWelcome to the Todo App!";
+  } else {
+    return "Good Evening!\nWelcome to the Todo App!";
+  }
+};
+
   return (
     <View style={styles.container} accessible={true} accessibilityLabel="Welcome screen with logo, welcome text, and a start button">
      
@@ -44,9 +61,13 @@ export default function WelcomeScreen({ navigation }) {
         accessibilityLabel="Todo app logo"
       />
       
-      <Text style={styles.welcomeText} accessible={true} accessibilityLabel="Welcome to the Todo App">
-        Welcome to the Todo App!
-      </Text>
+      <Text 
+        style={styles.welcomeText} 
+        accessible={true} 
+        accessibilityLabel={getGreeting()}>
+        {getGreeting()}
+</Text>
+
       
       <TouchableOpacity
         style={styles.button}
