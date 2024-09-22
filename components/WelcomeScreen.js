@@ -9,15 +9,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
   },
   logo: {
-    width: 100,  // Adjust the size as needed
+    width: 100,  
     height: 100,
-    marginBottom: 20,  // Space between logo and welcome text
+    marginBottom: 20,  
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 40,
-  // Increased margin to push the button further down
+    marginBottom: 40,  // Increased margin to push the button further down
     color: '#333',
   },
   button: {
@@ -31,26 +30,52 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
   },
-  
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
 });
 
 export default function WelcomeScreen({ navigation }) {
+
+  const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) {
+    return "Good Morning!\nWelcome to the Todo App!";
+  } else if (hour < 15) {
+    return "Good Afternoon!\nWelcome to the Todo App!";
+  } else {
+    return "Good Evening!\nWelcome to the Todo App!";
+  }
+};
+
   return (
-    <View style={styles.container}>
-      {/* Add the logo here */}
-      
+    <View style={styles.container} accessible={true} accessibilityLabel="Welcome screen with logo, welcome text, and a start button">
+     
       <Image
-        source={require('../assets/logo.png')}  // Replace with the correct path to your logo
+        source={require('../assets/logo.png')}  
         style={styles.logo}
+        accessible={true}
+        accessibilityLabel="Todo app logo"
       />
       
-      <Text style={styles.welcomeText}>Welcome to the Todo App!</Text>
+      <Text 
+        style={styles.welcomeText} 
+        accessible={true} 
+        accessibilityLabel={getGreeting()}>
+        {getGreeting()}
+</Text>
+
       
       <TouchableOpacity
         style={styles.button}
+        accessible={true}
+        accessibilityLabel="Get started with the todo list"
         onPress={() => navigation.navigate('TodoList')}
       >
-        <Text style={styles.buttonText}>Get Started</Text>
+        <Text style={styles.buttonText} accessible={false}>Get Started</Text>
       </TouchableOpacity>
     </View>
   );

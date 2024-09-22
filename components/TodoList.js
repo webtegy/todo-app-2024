@@ -7,6 +7,7 @@ import {
   StyleSheet,
   FlatList,
   Switch,
+  Alert,
 } from "react-native";
 import CheckBox from 'react-native-check-box';
 
@@ -14,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "./TodoItem";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Dimensions } from "react-native";
+import LottieView from 'lottie-react-native';
 
 const { width, height } = Dimensions.get("window");
 const getTimeBasedBackgroundColor = (highContrast) => {
@@ -37,7 +39,18 @@ const getTimeBasedBackgroundColor = (highContrast) => {
     return "#9e7dc9"; // Cool, restful night tones ECEFF1 '#302045'
   }
 };
-
+const getPriorityColor = (priority) => {
+  switch (priority) {
+    case "High":
+      return "#d71d0f"; // Red for high priority
+    case "Medium":
+      return "#ff9800"; // Orange for medium priority
+    case "Low":
+      return "#4caf50"; // Green for low priority
+    default:
+      return "#ff9800"; // Default to medium priority color
+  }
+};
 export default function TodoList() {
   const [tasks, setTasks] = useState([]);
   const [text, setText] = useState("");
@@ -77,6 +90,33 @@ export default function TodoList() {
     }
   }, [tasks]);
 
+  useEffect(() => {
+    const checkPendingTasks = () => {
+      const now = new Date();
+      const halfDay = new Date(now.setHours(12, 0, 0)); // 12:00 PM
+
+      if (now >= halfDay) {
+        const pendingTasks = tasks.filter(task => !task.completed);
+        const highPriorityCount = pendingTasks.filter(task => task.priority === "High").length;
+        const mediumPriorityCount = pendingTasks.filter(task => task.priority === "Medium").length;
+        const lowPriorityCount = pendingTasks.filter(task => task.priority === "Low").length;
+
+        if (pendingTasks.length > 0) {
+          Alert.alert(
+            "Reminder",
+            `Half of the day is over! You have ${pendingTasks.length} pending tasks. 
+            High: ${highPriorityCount}, Medium: ${mediumPriorityCount}, Low: ${lowPriorityCount}.`,
+            [{ text: "OK" }],
+            { cancelable: true }
+          );
+        }
+      }
+    };
+
+    const interval = setInterval(checkPendingTasks, 60000); // Check every minute for recording purpose. Value should be changed to 360000, so that it checks every hour and notifies.
+    return () => clearInterval(interval);
+  }, [tasks]);
+
   function addTask() {
     if (!text.trim()) return;
     const newTask = {
@@ -102,6 +142,9 @@ export default function TodoList() {
       )
     );
   }
+
+  
+
   const toggleSubtaskCompleted = (taskId, subtaskIndex) => {
     const updatedTasks = tasks.map((task) => {
       if (task.id === taskId) {
@@ -121,6 +164,7 @@ export default function TodoList() {
   function cyclePriority() {
     const nextPriority =
       priority === "High" ? "Medium" : priority === "Medium" ? "Low" : "High";
+      
     setPriority(nextPriority);
   }
 
@@ -158,18 +202,37 @@ export default function TodoList() {
     return priorityOrder[a.priority] - priorityOrder[b.priority];
   });
 
+  const renderEmptyList = () => (
+    <View style={styles.emptyContainer}>
+      <LottieView
+        source={require('../assets/Animation - 1726643875412.json')} // Path to your Lottie animation file
+        autoPlay
+        loop
+        style={styles.lottieAnimation}
+      />
+      <Text style={styles.emptyText}>There are no tasks to show</Text>
+    </View>
+  );
+
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.headerContainer}>
-        <Text style={[styles.accessibilityLabel, { color: textColor }]}>
+        <Text style={[styles.accessibilityLabel, { color: textColor }]}
+        accessibilityLabel="Greeting message"
+        >
           Hello
           <Icon name="hand-right" size={20} color="yellow" />
         </Text>
         <View style={styles.switchContainer}>
-          <Text style={[styles.darkThemeLabel, { color: textColor }]}>
+          <Text style={[styles.darkThemeLabel, { color: textColor }]}
+          accessibilityLabel="Dark theme toggle"
+          >
             Dark theme
           </Text>
-          <Switch value={highContrast} onValueChange={setHighContrast} />
+          <Switch value={highContrast} onValueChange={setHighContrast} 
+          accessibilityLabel="Switch between light and dark themes"
+          accessibilityRole="switch"
+          />
         </View>
       </View>
 
@@ -180,6 +243,9 @@ export default function TodoList() {
             filter === "All" && styles.selectedFilter,
           ]}
           onPress={() => setFilter("All")}
+          accessibilityLabel="Show all tasks"
+          accessibilityRole="button"
+          accessible={true}
         >
           <Text style={styles.filterButtonText}>All</Text>
         </TouchableOpacity>
@@ -189,6 +255,9 @@ export default function TodoList() {
             filter === "Completed" && styles.selectedFilter,
           ]}
           onPress={() => setFilter("Completed")}
+          accessibilityLabel="Show completed tasks"
+          accessibilityRole="button"
+          accessible={true}
         >
           <Text style={styles.filterButtonText}>Done</Text>
         </TouchableOpacity>
@@ -198,6 +267,9 @@ export default function TodoList() {
             filter === "Uncompleted" && styles.selectedFilter,
           ]}
           onPress={() => setFilter("Uncompleted")}
+          accessibilityLabel="Show uncompleted tasks"
+          accessibilityRole="button"
+          accessible={true}
         >
           <Text style={styles.filterButtonText}>Pending</Text>
         </TouchableOpacity>
@@ -215,8 +287,11 @@ export default function TodoList() {
             textColor={textColor}
             addSubtask={addSubtask} // Pass addSubtask function to TodoItem
             toggleSubtaskCompleted={toggleSubtaskCompleted} // Pass toggleSubtaskCompleted function
+            accessible={true}
+            accessibilityLabel={`Task ${item.text}, priority ${item.priority}, ${item.completed ? "completed" : "not completed"}`}
+      accessibilityRole="button"
           />
-        )}
+        )}ListEmptyComponent={renderEmptyList} 
       />
 
       <View style={styles.inputContainer}>
@@ -226,11 +301,24 @@ export default function TodoList() {
           onChangeText={setText}
           placeholder="New Task"
           placeholderTextColor={highContrast ? "#AAAAAA" : "#999"}
+          accessibilityLabel="Input field to add a new task"
+          accessible={true}
         />
-        <TouchableOpacity style={styles.priorityButton} onPress={cyclePriority}>
+        <TouchableOpacity
+          style={[styles.priorityButton, { backgroundColor: getPriorityColor(priority) }]}
+          onPress={cyclePriority}
+          accessibilityLabel={`Set task priority, current priority is ${priority}`}
+          accessibilityRole="button"
+          accessible={true}
+        >
           <Text style={styles.priorityButtonText}>{priority}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.addButton} onPress={addTask}>
+
+        <TouchableOpacity style={styles.addButton} onPress={addTask}
+          accessibilityLabel="Add new task"
+          accessibilityRole="button"
+          accessible={true}
+          >
           <Text style={styles.addButtonText}>Add</Text>
         </TouchableOpacity>
       </View>
@@ -271,7 +359,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   priorityButton: {
-    backgroundColor: "#ff9800",
+    //backgroundColor: "#ff9800",
+    //backgroundColor: getPriorityColor(),
     padding: 10,
     borderRadius: 8,
     marginLeft: 10,
@@ -316,5 +405,20 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     color: "#fff",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  lottieAnimation: {
+    width: 400,
+    height: 400
+    ,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: "white",
+    marginTop: 10,
   },
 });
