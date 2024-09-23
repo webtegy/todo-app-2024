@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     marginRight: 0,
-   // backgroundColor: task.completed ? 'red' : '#ccc' ,
   },
   priorityDot: {
     width: 10,
@@ -77,7 +76,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-   // backgroundColor: "red",
   },
   modalContent: {
     width: "80%",
@@ -256,7 +254,7 @@ export default function TodoItem({
       uncheckedCheckBoxColor='#ccc'  
            
             
-              //tintcolor={{ true: '#4CAF50', false: '#ccc' }}
+              
               style={{ marginRight: 10, size:5, }}
               accessibilityLabel={`Mark task ${task.text} as ${task.completed ? 'incomplete' : 'completed'}`}
               accessibilityRole="checkbox"
@@ -274,7 +272,7 @@ export default function TodoItem({
           </Text>
         </View>
 
-        {/* Subtasks section */}
+        // Subtasks section 
         <View style={styles.subtaskContainer}>
           {task.subtasks &&
             task.subtasks.map((subtask, index) => (
@@ -310,7 +308,7 @@ export default function TodoItem({
         </Text>
       </View>
 
-      {/* Buttons for Subtasks, Edit, Delete, and More */}
+      // Buttons for Subtasks, Edit, Delete, and More 
       <View
         style={[
           styles.priorityDot,
@@ -326,7 +324,7 @@ export default function TodoItem({
         <Icon name="ellipsis-vertical" size={20} color="#000" />
       </TouchableOpacity>
 
-      {/* Modal for adding subtask */}
+      // Modal for adding subtask 
       {showSubtaskInput && (
         <Modal
           visible={showSubtaskInput}
@@ -362,7 +360,7 @@ export default function TodoItem({
         </Modal>
       )}
 
-      {/* Modal for more options */}
+      // Modal for more options 
       {showMoreOptions && (
         <Modal
           visible={showMoreOptions}
@@ -441,7 +439,7 @@ export default function TodoItem({
         </Modal>
       )}
 
-      {/* Modal for editing task */}
+      // Modal for editing task 
       {modalVisible && (
         <Modal
           visible={modalVisible}
