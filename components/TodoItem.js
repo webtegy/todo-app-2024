@@ -12,6 +12,7 @@ import {
   DatePickerIOS,
   DatePickerAndroid,
   Modal,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -215,7 +216,7 @@ export default function TodoItem({
     editTask(task.id, newText, newPriority, endDate);
     setModalVisible(false);
     //setShowMoreOptions(false);
-    alert("Saved changes");
+    Alert.alert ("Saved changes");
   };
 
   const handleDateChange = (date) => {
@@ -272,7 +273,7 @@ export default function TodoItem({
           </Text>
         </View>
 
-        // Subtasks section 
+        {/* Subtasks section */}
         <View style={styles.subtaskContainer}>
           {task.subtasks &&
             task.subtasks.map((subtask, index) => (
@@ -308,7 +309,7 @@ export default function TodoItem({
         </Text>
       </View>
 
-      // Buttons for Subtasks, Edit, Delete, and More 
+      {/* Buttons for Subtasks, Edit, Delete, and More */}
       <View
         style={[
           styles.priorityDot,
@@ -324,7 +325,7 @@ export default function TodoItem({
         <Icon name="ellipsis-vertical" size={20} color="#000" />
       </TouchableOpacity>
 
-      // Modal for adding subtask 
+      {/* Modal for adding subtask */}
       {showSubtaskInput && (
         <Modal
           visible={showSubtaskInput}
@@ -360,7 +361,7 @@ export default function TodoItem({
         </Modal>
       )}
 
-      // Modal for more options 
+      {/* Modal for more options */}
       {showMoreOptions && (
         <Modal
           visible={showMoreOptions}
@@ -439,7 +440,7 @@ export default function TodoItem({
         </Modal>
       )}
 
-      // Modal for editing task 
+      {/* Modal for editing task */}
       {modalVisible && (
         <Modal
           visible={modalVisible}
