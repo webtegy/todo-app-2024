@@ -359,8 +359,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   priorityButton: {
-    //backgroundColor: "#ff9800",
-    //backgroundColor: getPriorityColor(),
     padding: 10,
     borderRadius: 8,
     marginLeft: 10,
